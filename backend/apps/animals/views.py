@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from apps.accounts.permissions import IsSeller, IsSellerAndOwner
 from .models import AnimalListing
 from .serializers import AnimalListingSerializer
+from .filters import AnimalListingFilter
+from .pagination import AnimalListingPagination
 
 
 class AnimalListingViewSet(viewsets.ModelViewSet):
@@ -15,13 +17,26 @@ class AnimalListingViewSet(viewsets.ModelViewSet):
     ViewSet for animal listings.
     
     - CREATE: Only sellers can create listings
-    - LIST: Any authenticated user can view active listings
+    - LIST: Any authenticated user can view active listings (with filtering and pagination)
     - UPDATE: Only the seller who owns the listing can update it
     - DELETE: Only the seller who owns the listing can delete it (soft delete)
+    
+    Filtering:
+    - animal_type: SMALL or LARGE
+    - price range: min_price, max_price
+    - location: partial match (case-insensitive)
+    - age range: min_age, max_age
+    - weight range: min_weight, max_weight
+    
+    Pagination:
+    - Default page size: 10
+    - Configurable with ?page_size= (max 50)
     """
     
     serializer_class = AnimalListingSerializer
     queryset = AnimalListing.objects.filter(is_active=True)
+    filterset_class = AnimalListingFilter
+    pagination_class = AnimalListingPagination
     
     def get_permissions(self):
         """
