@@ -28,4 +28,7 @@ urlpatterns = [
     
     # Animal listings API
     path('api/animals/', include('apps.animals.urls')),
+    
+    # Favorites API
+    path('api/favorites/', include('apps.favorites.urls')),
 ]
