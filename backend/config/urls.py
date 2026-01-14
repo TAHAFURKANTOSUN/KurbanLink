@@ -40,6 +40,9 @@ urlpatterns = [
     
     # Recommendations API
     path('api/recommendations/', include('apps.recommendations.urls')),
+    
+    # Butchers & Appointments API
+    path('api/butchers/', include('apps.butchers.urls')),
 ]
 
 # Serve media files in development
