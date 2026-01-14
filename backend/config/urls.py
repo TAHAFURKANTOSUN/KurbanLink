@@ -34,6 +34,9 @@ urlpatterns = [
     
     # Messages API
     path('api/messages/', include('apps.messages.urls')),
+    
+    # Notifications API
+    path('api/notifications/', include('apps.notifications.urls')),
 ]
 
 # Serve media files in development

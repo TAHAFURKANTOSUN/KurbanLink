@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'apps.animals',
     'apps.favorites',
     'apps.messages',
+    'apps.notifications',
     'apps.partnerships',
     'apps.butchers',
     'apps.reviews',
