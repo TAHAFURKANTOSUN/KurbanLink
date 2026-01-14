@@ -18,12 +18,20 @@ class Notification(models.Model):
     FAVORITED_LISTING = 'FAVORITED_LISTING'
     LISTING_UPDATED = 'LISTING_UPDATED'
     PRICE_CHANGED = 'PRICE_CHANGED'
+    APPOINTMENT_REQUESTED = 'APPOINTMENT_REQUESTED'
+    APPOINTMENT_APPROVED = 'APPOINTMENT_APPROVED'
+    APPOINTMENT_REJECTED = 'APPOINTMENT_REJECTED'
+    APPOINTMENT_CANCELLED = 'APPOINTMENT_CANCELLED'
     
     TYPE_CHOICES = [
         (NEW_MESSAGE, 'New Message'),
         (FAVORITED_LISTING, 'Favorited Listing'),
         (LISTING_UPDATED, 'Listing Updated'),
         (PRICE_CHANGED, 'Price Changed'),
+        (APPOINTMENT_REQUESTED, 'Appointment Requested'),
+        (APPOINTMENT_APPROVED, 'Appointment Approved'),
+        (APPOINTMENT_REJECTED, 'Appointment Rejected'),
+        (APPOINTMENT_CANCELLED, 'Appointment Cancelled'),
     ]
     
     user = models.ForeignKey(
