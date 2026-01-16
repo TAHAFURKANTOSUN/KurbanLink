@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import { fetchAnimal, fetchAnimalImages } from '../api/animals';
 import './AnimalDetail.css';
 
@@ -8,6 +9,7 @@ const AnimalDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { logout } = useAuth();
+    const { isFavorited, toggleFavorite, toggleLoading } = useFavorites();
 
     const [listing, setListing] = useState(null);
     const [images, setImages] = useState([]);
@@ -15,6 +17,7 @@ const AnimalDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [favoriteError, setFavoriteError] = useState(null);
 
     const loadListing = async () => {
         setLoading(true);
@@ -48,14 +51,26 @@ const AnimalDetail = () => {
         loadListing();
     }, [id]);
 
+    const handleFavoriteToggle = async () => {
+        setFavoriteError(null);
+        const result = await toggleFavorite(parseInt(id));
+        if (!result.success) {
+            setFavoriteError(result.error);
+            setTimeout(() => setFavoriteError(null), 3000);
+        }
+    };
+
     if (loading) {
         return (
             <div className="detail-container">
                 <div className="detail-header">
-                    <button onClick={() => navigate('/')} className="back-btn">← Back to Listings</button>
-                    <button onClick={logout} className="logout-btn">Logout</button>
+                    <button onClick={() => navigate('/')} className="back-btn">← İlanlara Dön</button>
+                    <div className="header-actions">
+                        <button onClick={() => navigate('/favorites')} className="favorites-link-btn">Favorilerim</button>
+                        <button onClick={logout} className="logout-btn">Çıkış</button>
+                    </div>
                 </div>
-                <div className="loading">Loading listing...</div>
+                <div className="loading">İlan yükleniyor...</div>
             </div>
         );
     }
@@ -64,13 +79,16 @@ const AnimalDetail = () => {
         return (
             <div className="detail-container">
                 <div className="detail-header">
-                    <button onClick={() => navigate('/')} className="back-btn">← Back to Listings</button>
-                    <button onClick={logout} className="logout-btn">Logout</button>
+                    <button onClick={() => navigate('/')} className="back-btn">← İlanlara Dön</button>
+                    <div className="header-actions">
+                        <button onClick={() => navigate('/favorites')} className="favorites-link-btn">Favorilerim</button>
+                        <button onClick={logout} className="logout-btn">Çıkış</button>
+                    </div>
                 </div>
                 <div className="not-found">
-                    <h2>Listing Not Found</h2>
-                    <p>The listing you're looking for doesn't exist or has been removed.</p>
-                    <button onClick={() => navigate('/')}>Back to Listings</button>
+                    <h2>İlan Bulunamadı</h2>
+                    <p>Aradığınız ilan bulunamadı veya kaldırılmış.</p>
+                    <button onClick={() => navigate('/')}>İlanlara Dön</button>
                 </div>
             </div>
         );
@@ -80,22 +98,31 @@ const AnimalDetail = () => {
         return (
             <div className="detail-container">
                 <div className="detail-header">
-                    <button onClick={() => navigate('/')} className="back-btn">← Back to Listings</button>
-                    <button onClick={logout} className="logout-btn">Logout</button>
+                    <button onClick={() => navigate('/')} className="back-btn">← İlanlara Dön</button>
+                    <div className="header-actions">
+                        <button onClick={() => navigate('/favorites')} className="favorites-link-btn">Favorilerim</button>
+                        <button onClick={logout} className="logout-btn">Çıkış</button>
+                    </div>
                 </div>
                 <div className="error-container">
                     <p className="error">{error}</p>
-                    <button onClick={loadListing}>Retry</button>
+                    <button onClick={loadListing}>Tekrar Dene</button>
                 </div>
             </div>
         );
     }
 
+    const favorited = isFavorited(parseInt(id));
+    const isTogglingFavorite = toggleLoading[id];
+
     return (
         <div className="detail-container">
             <div className="detail-header">
-                <button onClick={() => navigate('/')} className="back-btn">← Back to Listings</button>
-                <button onClick={logout} className="logout-btn">Logout</button>
+                <button onClick={() => navigate('/')} className="back-btn">← İlanlara Dön</button>
+                <div className="header-actions">
+                    <button onClick={() => navigate('/favorites')} className="favorites-link-btn">Favorilerim</button>
+                    <button onClick={logout} className="logout-btn">Çıkış</button>
+                </div>
             </div>
 
             <div className="detail-content">
@@ -104,7 +131,7 @@ const AnimalDetail = () => {
                         {selectedImage ? (
                             <img src={selectedImage.image_url} alt={`${listing.animal_type} ${listing.breed}`} />
                         ) : (
-                            <div className="image-placeholder-large">No Image Available</div>
+                            <div className="image-placeholder-large">Resim Yok</div>
                         )}
                     </div>
 
@@ -124,42 +151,56 @@ const AnimalDetail = () => {
                 </div>
 
                 <div className="detail-info">
-                    <h1>{listing.animal_type} - {listing.breed}</h1>
+                    <div className="title-actions">
+                        <h1>{listing.animal_type} - {listing.breed}</h1>
+                        <button
+                            className={`favorite-btn-large ${favorited ? 'favorited' : ''}`}
+                            onClick={handleFavoriteToggle}
+                            disabled={isTogglingFavorite}
+                            title={favorited ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+                        >
+                            {favorited ? '★ Favorilerde' : '☆ Favorilere Ekle'}
+                        </button>
+                    </div>
+
+                    {favoriteError && (
+                        <div className="inline-error">{favoriteError}</div>
+                    )}
 
                     <div className="info-grid">
                         <div className="info-item">
-                            <span className="label">Price</span>
+                            <span className="label">Fiyat</span>
                             <span className="value price">${listing.price}</span>
                         </div>
                         <div className="info-item">
-                            <span className="label">Location</span>
+                            <span className="label">Konum</span>
                             <span className="value">{listing.location}</span>
                         </div>
                         {listing.age && (
                             <div className="info-item">
-                                <span className="label">Age</span>
-                                <span className="value">{listing.age} years</span>
+                                <span className="label">Yaş</span>
+                                <span className="value">{listing.age} yaşında</span>
                             </div>
                         )}
                         {listing.weight && (
                             <div className="info-item">
-                                <span className="label">Weight</span>
+                                <span className="label">Ağırlık</span>
                                 <span className="value">{listing.weight} kg</span>
                             </div>
                         )}
                         <div className="info-item">
-                            <span className="label">Seller</span>
+                            <span className="label">Satıcı</span>
                             <span className="value seller">{listing.seller_email}</span>
                         </div>
                         <div className="info-item">
-                            <span className="label">Listed</span>
+                            <span className="label">Eklenme Tarihi</span>
                             <span className="value">{new Date(listing.created_at).toLocaleDateString()}</span>
                         </div>
                     </div>
 
                     {listing.description && (
                         <div className="description-section">
-                            <h3>Description</h3>
+                            <h3>Açıklama</h3>
                             <p>{listing.description}</p>
                         </div>
                     )}

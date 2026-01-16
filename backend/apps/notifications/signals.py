@@ -31,8 +31,8 @@ def notify_on_new_message(sender, instance, created, **kwargs):
     Notification.objects.create(
         user=receiver,
         type=Notification.NEW_MESSAGE,
-        title='New Message',
-        message=f'You have a new message about {conversation.listing.breed}',
+        title='Yeni Mesaj',
+        message=f'{conversation.listing.breed} hakkında yeni mesajınız var',
         data={
             'conversation_id': conversation.id,
             'listing_id': conversation.listing.id,
@@ -55,8 +55,8 @@ def notify_on_favorite(sender, instance, created, **kwargs):
     Notification.objects.create(
         user=seller,
         type=Notification.FAVORITED_LISTING,
-        title='Listing Favorited',
-        message=f'{instance.user.email} favorited your {instance.animal.breed} listing',
+        title='İlan Favorilendi',
+        message=f'{instance.user.email} {instance.animal.breed} ilanınızı favorilere ekledi',
         data={
             'listing_id': instance.animal.id,
         }
@@ -92,7 +92,7 @@ def notify_on_listing_update(sender, instance, created, **kwargs):
         return
     
     # Get users who favorited this listing
-    favorited_by = instance.favorites.select_related('user').values_list('user', flat=True)
+    favorited_by = instance.favorite_set.select_related('user').values_list('user', flat=True)
     
     if not favorited_by:
         # Clean up tracking
@@ -108,8 +108,8 @@ def notify_on_listing_update(sender, instance, created, **kwargs):
             Notification(
                 user_id=user_id,
                 type=Notification.PRICE_CHANGED,
-                title='Price Changed',
-                message=f'Price for {instance.breed} changed from ${old_price} to ${instance.price}',
+                title='Fiyat Değişti',
+                message=f'{instance.breed} için fiyat {old_price} → {instance.price} olarak değişti',
                 data={
                     'listing_id': instance.id,
                     'old_price': str(old_price),
@@ -124,8 +124,8 @@ def notify_on_listing_update(sender, instance, created, **kwargs):
             Notification(
                 user_id=user_id,
                 type=Notification.LISTING_UPDATED,
-                title='Listing Updated',
-                message=f'A listing you favorited ({instance.breed}) has been updated',
+                title='İlan Güncellendi',
+                message=f'Favorilediğiniz ilan ({instance.breed}) güncellendi',
                 data={
                     'listing_id': instance.id,
                 }

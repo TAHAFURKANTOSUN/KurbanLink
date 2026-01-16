@@ -21,11 +21,11 @@ const Login = () => {
         <div className="login-container">
             <div className="login-box">
                 <h1>KurbanLink</h1>
-                <h2>Login</h2>
+                <h2>Giriş Yap</h2>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">E-posta</label>
                         <input
                             id="email"
                             type="email"
@@ -37,7 +37,7 @@ const Login = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label htmlFor="password">Şifre</label>
                         <input
                             id="password"
                             type="password"
@@ -51,7 +51,7 @@ const Login = () => {
                     {error && <div className="error">{error}</div>}
 
                     <button type="submit" disabled={loading}>
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                     </button>
                 </form>
             </div>

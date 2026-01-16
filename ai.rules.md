@@ -13,6 +13,7 @@ The AI must follow these rules when generating or modifying code.
 - The project is expected to be deployed to a server in later stages.
 - Code must be written with **production-readiness in mind**, even if not deployed yet.
 - Code clarity and maintainability are more important than short-term speed.
+- The project should be Turkish language.
 
 ---
 

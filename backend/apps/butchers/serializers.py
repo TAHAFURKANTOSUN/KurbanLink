@@ -69,4 +69,23 @@ class AppointmentSerializer(serializers.ModelSerializer):
         if listing and not listing.is_active:
             raise serializers.ValidationError("Cannot book appointment for inactive listing.")
         
+        # Check for slot conflicts (only on create, not update)
+        if not self.instance:  # Creating new appointment
+            butcher = attrs.get('butcher')
+            date = attrs.get('date')
+            time = attrs.get('time')
+            
+            if butcher and date and time:
+                # Check if slot is already taken
+                conflicting = Appointment.objects.filter(
+                    butcher=butcher,
+                    date=date,
+                    time=time
+                ).exists()
+                
+                if conflicting:
+                    raise serializers.ValidationError(
+                        "Bu saat dilimi dolu. Lütfen başka bir saat seçin."
+                    )
+        
         return attrs

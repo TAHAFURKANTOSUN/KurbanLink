@@ -93,6 +93,36 @@ class ConversationViewSet(viewsets.ModelViewSet):
             )
             serializer = self.get_serializer(existing_conversation)
             return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'])
+    def mark_all_read(self, request, pk=None):
+        """
+        Mark all messages in conversation as read.
+        
+        Only marks messages where receiver is request.user.
+        """
+        conversation = self.get_object()
+        
+        # Determine which messages to mark (received by this user)
+        if request.user == conversation.buyer:
+            # Mark messages from seller
+            marked = Message.objects.filter(
+                conversation=conversation,
+                sender=conversation.seller,
+                is_read=False
+            ).update(is_read=True)
+        else:
+            # Mark messages from buyer
+            marked = Message.objects.filter(
+                conversation=conversation,
+                sender=conversation.buyer,
+                is_read=False
+            ).update(is_read=True)
+        
+        return Response({
+            'status': 'ok',
+            'marked': marked
+        })
 
 
 class MessageViewSet(viewsets.ModelViewSet):

@@ -27,6 +27,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     listing_details = AnimalListingBasicSerializer(source='listing', read_only=True)
     buyer_email = serializers.EmailField(source='buyer.email', read_only=True)
     seller_email = serializers.EmailField(source='seller.email', read_only=True)
+    last_message = serializers.SerializerMethodField()
+    unread_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Conversation
@@ -38,9 +40,42 @@ class ConversationSerializer(serializers.ModelSerializer):
             'buyer_email',
             'seller',
             'seller_email',
+            'last_message',
+            'unread_count',
             'created_at'
         ]
         read_only_fields = ['id', 'buyer', 'seller', 'created_at']
+    
+    def get_last_message(self, obj):
+        """Get the most recent message in this conversation."""
+        last_msg = obj.messages.order_by('-created_at').first()
+        if last_msg:
+            return {
+                'content': last_msg.content,
+                'sender_id': last_msg.sender.id,
+                'created_at': last_msg.created_at
+            }
+        return None
+    
+    def get_unread_count(self, obj):
+        """Get count of unread messages for the current user."""
+        request = self.context.get('request')
+        if not request or not request.user:
+            return 0
+        
+        # Count messages sent by the OTHER participant that are unread
+        if request.user == obj.buyer:
+            # Messages from seller to buyer
+            return obj.messages.filter(
+                sender=obj.seller,
+                is_read=False
+            ).count()
+        else:
+            # Messages from buyer to seller
+            return obj.messages.filter(
+                sender=obj.buyer,
+                is_read=False
+            ).count()
     
     def validate_listing(self, value: AnimalListing) -> AnimalListing:
         """

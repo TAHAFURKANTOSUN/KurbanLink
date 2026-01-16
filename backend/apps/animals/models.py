@@ -16,8 +16,8 @@ class AnimalListing(models.Model):
     """
     
     ANIMAL_TYPE_CHOICES = [
-        ('SMALL', 'Small Animal'),
-        ('LARGE', 'Large Animal'),
+        ('KUCUKBAS', 'Küçükbaş'),
+        ('BUYUKBAS', 'Büyükbaş'),
     ]
     
     seller = models.ForeignKey(

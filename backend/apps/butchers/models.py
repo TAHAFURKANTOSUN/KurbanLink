@@ -131,9 +131,11 @@ class Appointment(models.Model):
         verbose_name = 'appointment'
         verbose_name_plural = 'appointments'
         ordering = ['-created_at']
+        unique_together = [['butcher', 'date', 'time']]
         indexes = [
             models.Index(fields=['butcher', 'status']),
             models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['butcher', 'date', 'time']),
         ]
     
     def __str__(self) -> str:

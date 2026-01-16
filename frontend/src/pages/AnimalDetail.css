@@ -11,7 +11,13 @@
     margin-bottom: 2rem;
 }
 
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .back-btn,
+.favorites-link-btn,
 .logout-btn {
     padding: 0.5rem 1.5rem;
     border: none;
@@ -21,12 +27,14 @@
     transition: background-color 0.2s;
 }
 
-.back-btn {
+.back-btn,
+.favorites-link-btn {
     background-color: #3498db;
     color: white;
 }
 
-.back-btn:hover {
+.back-btn:hover,
+.favorites-link-btn:hover {
     background-color: #2980b9;
 }
 
@@ -109,6 +117,15 @@
     background-color: #2980b9;
 }
 
+.inline-error {
+    background-color: #fee;
+    color: #c33;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
 .detail-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -188,10 +205,44 @@
     object-fit: cover;
 }
 
+.title-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
 .detail-info h1 {
-    margin: 0 0 1.5rem 0;
+    margin: 0;
     color: #2c3e50;
     font-size: 2rem;
+}
+
+.favorite-btn-large {
+    padding: 0.75rem 1.5rem;
+    background-color: white;
+    border: 2px solid #ecf0f1;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.favorite-btn-large:hover:not(:disabled) {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.favorite-btn-large:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.favorite-btn-large.favorited {
+    background-color: #f39c12;
+    color: white;
+    border-color: #f39c12;
 }
 
 .info-grid {
