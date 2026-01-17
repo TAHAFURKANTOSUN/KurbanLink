@@ -12,6 +12,21 @@ from .models import ButcherProfile, Appointment
 from .serializers import ButcherProfileSerializer, AppointmentSerializer
 
 
+class IsOwnerOrReadOnly(IsAuthenticated):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `user` attribute.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in ['GET', 'HEAD', 'OPTIONS']:
+            return True
+
+        # Instance must have an attribute named `user`.
+        return obj.user == request.user
+
+
 class ButcherProfileViewSet(viewsets.ModelViewSet):
     """
     ViewSet for butcher profiles.
@@ -19,11 +34,13 @@ class ButcherProfileViewSet(viewsets.ModelViewSet):
     - LIST: View all active butchers
     - CREATE: Create own butcher profile (IsButcher)
     - RETRIEVE: View butcher details
+    - UPDATE: Update own profile
+    - ME: Get own profile
     """
     
     serializer_class = ButcherProfileSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'head', 'options']  # No PUT/PATCH/DELETE
+    http_method_names = ['get', 'post', 'patch', 'put', 'head', 'options']
     
     def get_queryset(self):
         """
@@ -31,7 +48,14 @@ class ButcherProfileViewSet(viewsets.ModelViewSet):
         
         Can filter by city.
         """
-        queryset = ButcherProfile.objects.filter(is_active=True).select_related('user')
+        queryset = ButcherProfile.objects.select_related('user')
+        
+        # Filter by active status unless it's the owner viewing their own
+        if self.action in ['list', 'retrieve']:
+             # For general viewing, show only active. 
+             # Ideally we might struggle if an owner wants to see their inactive profile via ID.
+             # But 'me' endpoint handles that separately.
+             queryset = queryset.filter(is_active=True)
         
         # Filter by city if provided
         city = self.request.query_params.get('city')
@@ -46,16 +70,35 @@ class ButcherProfileViewSet(viewsets.ModelViewSet):
         """
         if self.action == 'create':
             permission_classes = [IsAuthenticated, IsButcher]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         else:
             permission_classes = [IsAuthenticated]
         
         return [permission() for permission in permission_classes]
     
+
     def perform_create(self, serializer):
         """
         Auto-assign user when creating profile.
         """
+        # Check if user already has a profile
+        if ButcherProfile.objects.filter(user=self.request.user).exists():
+            raise serializers.ValidationError("User already has a butcher profile.")
+            
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        """
+        Get current user's butcher profile.
+        """
+        try:
+            profile = ButcherProfile.objects.get(user=request.user)
+            serializer = self.get_serializer(profile)
+            return Response(serializer.data)
+        except ButcherProfile.DoesNotExist:
+            return Response(None) # Return null if no profile exists
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):

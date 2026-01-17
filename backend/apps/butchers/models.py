@@ -37,6 +37,10 @@ class ButcherProfile(models.Model):
         blank=True,
         help_text="Price range (e.g., '500-1000')"
     )
+    experience_years = models.PositiveIntegerField(
+        default=1,
+        help_text="Years of experience"
+    )
     rating = models.FloatField(
         default=0.0,
         help_text="Average rating (0-5)"

@@ -1,0 +1,261 @@
+/* Butchers Page Styles */
+
+.butchers-header,
+.butcher-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.butchers-header h1,
+.butcher-detail-header h1 {
+    margin: 0;
+}
+
+/* Butcher Grid */
+.butcher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.butcher-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.butcher-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.butcher-info {
+    flex: 1;
+}
+
+.butcher-info h2 {
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.butcher-location,
+.butcher-experience {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.butcher-services {
+    margin: 1rem 0;
+}
+
+.butcher-services strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.butcher-services ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.butcher-services li {
+    padding: 0.25rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.butcher-services li:before {
+    content: "✓ ";
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.butcher-rating {
+    margin-top: 0.5rem;
+    color: #f8b500;
+    font-weight: bold;
+}
+
+.appointment-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.appointment-btn:hover {
+    background: #0056b3;
+}
+
+/* Butcher Detail */
+.butcher-detail-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.butcher-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.info-row strong {
+    min-width: 100px;
+    color: #666;
+}
+
+.service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.service-tag {
+    background: #e9ecef;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+/* Appointment Form */
+.appointment-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-section h2 {
+    margin: 0 0 1.5rem 0;
+    color: #333;
+}
+
+.appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.success-message {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.success-message .link-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+
+.success-message .link-btn:hover {
+    background: #218838;
+}
+
+.error-message {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.submit-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.submit-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.empty-message {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}

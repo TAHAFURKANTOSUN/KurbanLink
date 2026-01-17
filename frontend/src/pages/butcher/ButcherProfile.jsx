@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchButcherProfile, createButcherProfile, updateButcherProfile } from '../../api/butchers';
+import { fetchMyButcherProfile, createButcherProfile, updateButcherProfile } from '../../api/butchers';
 import './Butcher.css';
 
 const ButcherProfile = () => {
@@ -10,7 +10,8 @@ const ButcherProfile = () => {
         business_name: '',
         city: '',
         services: '',
-        price_range: ''
+        price_range: '',
+        experience_years: ''
     });
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -24,14 +25,15 @@ const ButcherProfile = () => {
     const loadProfile = async () => {
         setLoading(true);
         try {
-            const data = await fetchButcherProfile();
+            const data = await fetchMyButcherProfile();
             if (data) {
                 setProfile(data);
                 setFormData({
                     business_name: data.business_name || '',
                     city: data.city || '',
                     services: Array.isArray(data.services) ? data.services.join(', ') : '',
-                    price_range: data.price_range || ''
+                    price_range: data.price_range || '',
+                    experience_years: data.experience_years || ''
                 });
             }
         } catch (err) {
@@ -79,6 +81,10 @@ const ButcherProfile = () => {
 
             if (formData.price_range) {
                 profileData.price_range = formData.price_range;
+            }
+
+            if (formData.experience_years) {
+                profileData.experience_years = parseInt(formData.experience_years);
             }
 
             if (profile) {
@@ -189,6 +195,20 @@ const ButcherProfile = () => {
                                     placeholder="örn: Kesim, Paketleme, Nakliye"
                                 />
                                 <small>Birden fazla hizmet için virgül kullanın</small>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="experience_years">Deneyim (Yıl)</label>
+                                <input
+                                    type="number"
+                                    id="experience_years"
+                                    name="experience_years"
+                                    value={formData.experience_years}
+                                    onChange={handleChange}
+                                    placeholder="örn: 10"
+                                    min="0"
+                                    required
+                                />
                             </div>
 
                             <div className="form-group">

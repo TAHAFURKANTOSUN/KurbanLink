@@ -24,6 +24,7 @@ class ButcherProfileSerializer(serializers.ModelSerializer):
             'city',
             'services',
             'price_range',
+            'experience_years',
             'rating',
             'is_active'
         ]
@@ -33,6 +34,7 @@ class ButcherProfileSerializer(serializers.ModelSerializer):
             'city': 'Şehir',
             'services': 'Hizmetler',
             'price_range': 'Fiyat Aralığı',
+            'experience_years': 'Deneyim Yılı',
             'rating': 'Değerlendirme',
             'is_active': 'Aktif'
         }
@@ -46,7 +48,7 @@ class ButcherProfileSerializer(serializers.ModelSerializer):
         if request and request.user:
             # Check if user has BUTCHER role
             has_butcher_role = request.user.user_roles.filter(
-                role__code=Role.BUTCHER,
+                role__code='BUTCHER',
                 is_active=True
             ).exists()
             
@@ -63,29 +65,30 @@ class AppointmentSerializer(serializers.ModelSerializer):
     
     butcher_name = serializers.CharField(source='butcher.business_name', read_only=True)
     user_email = serializers.EmailField(source='user.email', read_only=True)
+    listing_title = serializers.CharField(source='listing.title', read_only=True, required=False)
     
     class Meta:
         model = Appointment
         fields = [
             'id',
             'butcher',
-            'butcher_details',
-            'customer',
-            'customer_email',
+            'butcher_name',
+            'user',
+            'user_email',
+            'listing',
+            'listing_title',
             'date',
             'time',
-            'animal_count',
-            'notes',
+            'note',
             'status',
             'created_at'
         ]
         labels = {
             'butcher': 'Kasap',
-            'customer': 'Müşteri',
+            'listing': 'İlan',
             'date': 'Tarih',
             'time': 'Saat',
-            'animal_count': 'Hayvan Sayısı',
-            'notes': 'Notlar',
+            'note': 'Not',
             'status': 'Durum',
             'created_at': 'Oluşturulma Tarihi'
         }

@@ -127,6 +127,9 @@ const AnimalsList = () => {
             <div className="animals-header">
                 <h1>Hayvan İlanları</h1>
                 <div className="header-actions">
+                    <button onClick={() => navigate('/butchers')} className="favorites-link-btn">
+                        🏪 Kasaplar
+                    </button>
                     <button onClick={() => navigate('/messages')} className="favorites-link-btn">
                         💬 Mesajlar
                     </button>

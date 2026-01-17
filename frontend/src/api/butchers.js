@@ -16,16 +16,27 @@ apiClient.interceptors.request.use(config => {
     return config;
 });
 
+/**
+ * Fetch all butcher profiles
+ */
+export const fetchButcherProfiles = async () => {
+    const response = await apiClient.get('/api/butchers/profiles/');
+    return response.data;
+};
 
 /**
- * Fetch current user's butcher profile
+ * Fetch single butcher profile by ID
  */
-export const fetchButcherProfile = async () => {
-    const response = await apiClient.get('/api/butchers/profiles/');
-    // Response might be a list or single object depending on backend
-    if (Array.isArray(response.data)) {
-        return response.data[0] || null;
-    }
+export const fetchButcherProfile = async (id) => {
+    const response = await apiClient.get(`/api/butchers/profiles/${id}/`);
+    return response.data;
+};
+
+/**
+ * Fetch current user's butcher profile (for ButcherProfile page)
+ */
+export const fetchMyButcherProfile = async () => {
+    const response = await apiClient.get('/api/butchers/profiles/me/');
     return response.data;
 };
 
@@ -46,7 +57,23 @@ export const updateButcherProfile = async (id, data) => {
 };
 
 /**
- * Fetch appointments for current butcher
+ * Create a new appointment
+ */
+export const createAppointment = async (appointmentData) => {
+    const response = await apiClient.post('/api/butchers/appointments/', appointmentData);
+    return response.data;
+};
+
+/**
+ * Fetch all appointments (for butcher)
+ */
+export const fetchAppointments = async () => {
+    const response = await apiClient.get('/api/butchers/appointments/');
+    return response.data;
+};
+
+/**
+ * Fetch appointments for current butcher (alias)
  */
 export const fetchButcherAppointments = async () => {
     const response = await apiClient.get('/api/butchers/appointments/');
@@ -56,23 +83,23 @@ export const fetchButcherAppointments = async () => {
 /**
  * Approve an appointment
  */
-export const approveAppointment = async (id) => {
-    const response = await apiClient.post(`/api/butchers/appointments/${id}/approve/`);
+export const approveAppointment = async (appointmentId) => {
+    const response = await apiClient.post(`/api/butchers/appointments/${appointmentId}/approve/`);
     return response.data;
 };
 
 /**
  * Reject an appointment
  */
-export const rejectAppointment = async (id) => {
-    const response = await apiClient.post(`/api/butchers/appointments/${id}/reject/`);
+export const rejectAppointment = async (appointmentId) => {
+    const response = await apiClient.post(`/api/butchers/appointments/${appointmentId}/reject/`);
     return response.data;
 };
 
 /**
- * Cancel an appointment (if allowed)
+ * Cancel an appointment
  */
-export const cancelAppointment = async (id) => {
-    const response = await apiClient.post(`/api/butchers/appointments/${id}/cancel/`);
+export const cancelAppointment = async (appointmentId) => {
+    const response = await apiClient.post(`/api/butchers/appointments/${appointmentId}/cancel/`);
     return response.data;
 };

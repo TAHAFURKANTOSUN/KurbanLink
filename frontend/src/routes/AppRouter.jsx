@@ -18,6 +18,10 @@ import EditListing from '../pages/seller/EditListing';
 import ButcherProfile from '../pages/butcher/ButcherProfile';
 import ButcherAppointments from '../pages/butcher/ButcherAppointments';
 
+// Butcher discovery
+import ButcherList from '../pages/butchers/ButcherList';
+import ButcherDetail from '../pages/butchers/ButcherDetail';
+
 // Messages
 import ConversationList from '../pages/messages/ConversationList';
 import ConversationDetail from '../pages/messages/ConversationDetail';
@@ -59,6 +63,10 @@ const AppRouter = () => {
                         <Route path="/seller/listings" element={<RoleProtectedRoute requiredRole="SELLER"><SellerListings /></RoleProtectedRoute>} />
                         <Route path="/seller/listings/new" element={<RoleProtectedRoute requiredRole="SELLER"><NewListing /></RoleProtectedRoute>} />
                         <Route path="/seller/listings/:id/edit" element={<RoleProtectedRoute requiredRole="SELLER"><EditListing /></RoleProtectedRoute>} />
+
+                        {/* Butcher discovery routes */}
+                        <Route path="/butchers" element={<ProtectedRoute><ButcherList /></ProtectedRoute>} />
+                        <Route path="/butchers/:id" element={<ProtectedRoute><ButcherDetail /></ProtectedRoute>} />
 
                         {/* Butcher routes */}
                         <Route path="/butcher/profile" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherProfile /></RoleProtectedRoute>} />
