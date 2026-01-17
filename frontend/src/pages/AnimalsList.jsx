@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
+import NotificationDropdown from '../components/NotificationDropdown';
 import './AnimalsList.css';
 
 const AnimalsList = () => {
     const navigate = useNavigate();
-    const { logout, roles } = useAuth();
+    const { logout, user } = useAuth();
     const { isFavorited, toggleFavorite, toggleLoading } = useFavorites();
     const [listings, setListings] = useState([]);
     const [listingImages, setListingImages] = useState({});
@@ -126,21 +127,31 @@ const AnimalsList = () => {
             <div className="animals-header">
                 <h1>Hayvan İlanları</h1>
                 <div className="header-actions">
+                    <button onClick={() => navigate('/messages')} className="favorites-link-btn">
+                        💬 Mesajlar
+                    </button>
+                    <button onClick={() => navigate('/notifications')} className="favorites-link-btn">
+                        🔔 Bildirimler
+                    </button>
+                    <NotificationDropdown />
                     <button onClick={() => navigate('/favorites')} className="favorites-link-btn">
                         ⭐ Favorilerim
                     </button>
-                    {roles && roles.includes('SELLER') && (
+                    <button onClick={() => navigate('/profile')} className="favorites-link-btn">
+                        👤 Profilim
+                    </button>
+                    {user?.roles && user.roles.includes('SELLER') && (
                         <button onClick={() => navigate('/seller/listings')} className="favorites-link-btn">
                             📋 İlanlarım
                         </button>
                     )}
-                    {roles && roles.includes('BUTCHER') && (
+                    {user?.roles && user.roles.includes('BUTCHER') && (
                         <>
                             <button onClick={() => navigate('/butcher/appointments')} className="favorites-link-btn">
                                 📅 Randevularım
                             </button>
                             <button onClick={() => navigate('/butcher/profile')} className="favorites-link-btn">
-                                👤 Profil
+                                👤 Kasap Profilim
                             </button>
                         </>
                     )}

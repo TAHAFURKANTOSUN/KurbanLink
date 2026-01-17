@@ -18,6 +18,16 @@ import EditListing from '../pages/seller/EditListing';
 import ButcherProfile from '../pages/butcher/ButcherProfile';
 import ButcherAppointments from '../pages/butcher/ButcherAppointments';
 
+// Messages
+import ConversationList from '../pages/messages/ConversationList';
+import ConversationDetail from '../pages/messages/ConversationDetail';
+
+// Notifications
+import Notifications from '../pages/Notifications';
+
+// Profile
+import Profile from '../pages/Profile';
+
 const AppRouter = () => {
     return (
         <BrowserRouter>
@@ -29,74 +39,30 @@ const AppRouter = () => {
                         <Route path="/register" element={<Register />} />
 
                         {/* Protected routes */}
-                        <Route
-                            path="/"
-                            element={
-                                <ProtectedRoute>
-                                    <AnimalsList />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/animals/:id"
-                            element={
-                                <ProtectedRoute>
-                                    <AnimalDetail />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/favorites"
-                            element={
-                                <ProtectedRoute>
-                                    <Favorites />
-                                </ProtectedRoute>
-                            }
-                        />
+                        <Route path="/" element={<ProtectedRoute><AnimalsList /></ProtectedRoute>} />
+                        <Route path="/animals/:id" element={<ProtectedRoute><AnimalDetail /></ProtectedRoute>
+
+                        } />
+                        <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+
+                        {/* Messages routes */}
+                        <Route path="/messages" element={<ProtectedRoute><ConversationList /></ProtectedRoute>} />
+                        <Route path="/messages/:conversationId" element={<ProtectedRoute><ConversationDetail /></ProtectedRoute>} />
+
+                        {/* Notifications */}
+                        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+
+                        {/* Profile */}
+                        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
                         {/* Seller routes */}
-                        <Route
-                            path="/seller/listings"
-                            element={
-                                <RoleProtectedRoute requiredRole="SELLER">
-                                    <SellerListings />
-                                </RoleProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/seller/listings/new"
-                            element={
-                                <RoleProtectedRoute requiredRole="SELLER">
-                                    <NewListing />
-                                </RoleProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/seller/listings/:id/edit"
-                            element={
-                                <RoleProtectedRoute requiredRole="SELLER">
-                                    <EditListing />
-                                </RoleProtectedRoute>
-                            }
-                        />
+                        <Route path="/seller/listings" element={<RoleProtectedRoute requiredRole="SELLER"><SellerListings /></RoleProtectedRoute>} />
+                        <Route path="/seller/listings/new" element={<RoleProtectedRoute requiredRole="SELLER"><NewListing /></RoleProtectedRoute>} />
+                        <Route path="/seller/listings/:id/edit" element={<RoleProtectedRoute requiredRole="SELLER"><EditListing /></RoleProtectedRoute>} />
 
                         {/* Butcher routes */}
-                        <Route
-                            path="/butcher/profile"
-                            element={
-                                <RoleProtectedRoute requiredRole="BUTCHER">
-                                    <ButcherProfile />
-                                </RoleProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/butcher/appointments"
-                            element={
-                                <RoleProtectedRoute requiredRole="BUTCHER">
-                                    <ButcherAppointments />
-                                </RoleProtectedRoute>
-                            }
-                        />
+                        <Route path="/butcher/profile" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherProfile /></RoleProtectedRoute>} />
+                        <Route path="/butcher/appointments" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherAppointments /></RoleProtectedRoute>} />
 
                         {/* Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />

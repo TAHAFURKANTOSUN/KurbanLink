@@ -2,15 +2,12 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const RoleProtectedRoute = ({ children, requiredRole }) => {
-    const { user, roles, isInitializing } = useAuth();
+    const { user, isAuthenticated, isInitializing } = useAuth();
 
-    // Debug log
-    const hasToken = !!localStorage.getItem('access_token');
     console.log('[RoleProtectedRoute]', {
         isInitializing,
-        hasUser: !!user,
-        hasToken,
-        roles,
+        isAuthenticated,
+        userRoles: user?.roles,
         requiredRole
     });
 
@@ -26,13 +23,13 @@ const RoleProtectedRoute = ({ children, requiredRole }) => {
     }
 
     // Check authentication first
-    if (!user || !hasToken) {
+    if (!isAuthenticated) {
         console.log('[RoleProtectedRoute] Not authenticated, redirecting to /login');
         return <Navigate to="/login" replace />;
     }
 
     // Then check role
-    if (requiredRole && (!roles || !roles.includes(requiredRole))) {
+    if (requiredRole && (!user?.roles || !user.roles.includes(requiredRole))) {
         console.log(`[RoleProtectedRoute] Missing ${requiredRole} role, redirecting to /`);
         return (
             <div className="page">

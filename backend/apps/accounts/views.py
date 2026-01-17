@@ -2,12 +2,12 @@
 Views for accounts app.
 """
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer, RegisterSerializer
+from .serializers import CustomTokenObtainPairSerializer, RegisterSerializer, MeSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -69,3 +69,15 @@ class RegisterView(APIView):
             return Response(user_data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeAPIView(generics.RetrieveAPIView):
+    """
+    GET /api/auth/me/
+    Returns current authenticated user's id, email, and active roles.
+    """
+    serializer_class = MeSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user

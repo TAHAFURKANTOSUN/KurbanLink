@@ -1,0 +1,106 @@
+/* Notification Dropdown  Styles */
+
+.notification-dropdown {
+    position: relative;
+}
+
+.notification-bell {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: relative;
+    padding: 0.5rem;
+}
+
+.notification-bell .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 320px;
+    max-height: 400px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.dropdown-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown-header span {
+    font-weight: 600;
+    color: #333;
+}
+
+.dropdown-header button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.dropdown-header button:hover {
+    text-decoration: underline;
+}
+
+.dropdown-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-item.unread {
+    background: #f8f9ff;
+    border-left: 3px solid #007bff;
+}
+
+.dropdown-message {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.dropdown-time {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.dropdown-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+}

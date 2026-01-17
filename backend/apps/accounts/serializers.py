@@ -45,6 +45,23 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+class MeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for current user identity.
+    Returns id, email, and active roles.
+    """
+    roles = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'roles']
+        read_only_fields = ['id', 'email', 'roles']
+    
+    def get_roles(self, obj):
+        """Extract role codes from active UserRole relationships"""
+        return [ur.role.code for ur in obj.user_roles.filter(is_active=True)]
+
+
 class RegisterSerializer(serializers.Serializer):
     """
     Serializer for user registration with role selection.

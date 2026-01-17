@@ -2,14 +2,11 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-    const { user, isInitializing } = useAuth();
+    const { isAuthenticated, isInitializing } = useAuth();
 
-    // Debug log
-    const hasToken = !!localStorage.getItem('access_token');
     console.log('[ProtectedRoute]', {
         isInitializing,
-        hasUser: !!user,
-        hasToken
+        isAuthenticated
     });
 
     // Show loading while initializing
@@ -27,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
     }
 
     // After initialization, check authentication
-    if (!user || !hasToken) {
+    if (!isAuthenticated) {
         console.log('[ProtectedRoute] Redirecting to /login');
         return <Navigate to="/login" replace />;
     }
