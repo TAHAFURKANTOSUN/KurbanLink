@@ -1,89 +1,142 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import { hasTokens, setTokens, clearTokens, getAccessToken } from '../utils/token';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { loginAPI, registerAPI } from '../api/auth';
-import { getRolesFromToken } from '../utils/jwt';
+import { getRolesFromToken, getUserIdFromToken } from '../utils/jwt';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(hasTokens());
+    const [user, setUser] = useState(null);
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [isInitializing, setIsInitializing] = useState(true);
 
-    // Check authentication status and load roles on mount
+    // Initialize auth state from localStorage on mount
     useEffect(() => {
-        const authenticated = hasTokens();
-        setIsAuthenticated(authenticated);
+        const initAuth = () => {
+            try {
+                const token = localStorage.getItem('access_token');
 
-        if (authenticated) {
-            const token = getAccessToken();
-            if (token) {
-                const userRoles = getRolesFromToken(token);
-                setRoles(userRoles);
+                // Debug log
+                console.log('[AuthContext] Initializing:', {
+                    hasToken: !!token,
+                    tokenLength: token?.length || 0
+                });
+
+                if (token) {
+                    // Extract user info from token
+                    const userId = getUserIdFromToken(token);
+                    const userRoles = getRolesFromToken(token);
+
+                    console.log('[AuthContext] Token found:', {
+                        userId,
+                        roles: userRoles
+                    });
+
+                    setUser({ id: userId });
+                    setRoles(userRoles || []);
+                } else {
+                    console.log('[AuthContext] No token found');
+                    setUser(null);
+                    setRoles([]);
+                }
+            } catch (err) {
+                console.error('[AuthContext] Init error:', err);
+                setUser(null);
+                setRoles([]);
+            } finally {
+                setIsInitializing(false);
             }
-        }
+        };
+
+        initAuth();
     }, []);
 
     const login = async (email, password) => {
         setLoading(true);
         setError(null);
+
         try {
             const data = await loginAPI(email, password);
-            setTokens(data.access, data.refresh);
-            setIsAuthenticated(true);
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
 
-            // Extract and store roles
+            const userId = getUserIdFromToken(data.access);
             const userRoles = getRolesFromToken(data.access);
-            setRoles(userRoles);
+
+            setUser({ id: userId, email });
+            setRoles(userRoles || []);
+
+            console.log('[AuthContext] Login success:', {
+                userId,
+                roles: userRoles
+            });
 
             return true;
         } catch (err) {
-            setError(err.response?.data?.detail || 'Giriş başarısız');
+            const errorMsg = err.response?.data?.detail || 'Login failed';
+            setError(errorMsg);
+            console.error('[AuthContext] Login failed:', err);
             return false;
         } finally {
             setLoading(false);
         }
     };
 
-    const register = async (payload) => {
+    const register = async (userData) => {
         setLoading(true);
         setError(null);
-        try {
-            const data = await registerAPI(payload);
-            setTokens(data.access, data.refresh);
-            setIsAuthenticated(true);
 
-            // Store roles from response
-            setRoles(data.roles || []);
+        try {
+            const data = await registerAPI(userData);
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+
+            const userId = getUserIdFromToken(data.access);
+            const userRoles = getRolesFromToken(data.access);
+
+            setUser({ id: userId, email: userData.email });
+            setRoles(userRoles || []);
+
+            console.log('[AuthContext] Register success:', {
+                userId,
+                roles: userRoles
+            });
 
             return { success: true };
         } catch (err) {
-            const errorMessage = err.response?.data || { detail: 'Kayıt başarısız' };
-            setError(errorMessage);
-            return { success: false, errors: errorMessage };
+            const errors = err.response?.data || {};
+            console.error('[AuthContext] Register failed:', err);
+            return { success: false, errors };
         } finally {
             setLoading(false);
         }
     };
 
     const logout = () => {
-        clearTokens();
-        setIsAuthenticated(false);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setUser(null);
         setRoles([]);
+        console.log('[AuthContext] Logout');
     };
 
-    const value = {
-        isAuthenticated,
-        roles,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-    };
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                roles,
+                loading,
+                error,
+                isInitializing,
+                login,
+                register,
+                logout
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {

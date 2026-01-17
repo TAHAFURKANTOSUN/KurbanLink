@@ -92,7 +92,7 @@ def notify_on_listing_update(sender, instance, created, **kwargs):
         return
     
     # Get users who favorited this listing
-    favorited_by = instance.favorite_set.select_related('user').values_list('user', flat=True)
+    favorited_by = instance.favorited_by.select_related('user').values_list('user', flat=True)
     
     if not favorited_by:
         # Clean up tracking

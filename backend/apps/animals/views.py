@@ -46,14 +46,14 @@ class AnimalListingViewSet(viewsets.ModelViewSet):
         - update/partial_update/destroy: Requires IsSellerAndOwner
         - list/retrieve: Requires IsAuthenticated only
         """
-        if self.action == 'create':
-            permission_classes = [IsAuthenticated, IsSeller]
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAuthenticated, IsSellerAndOwner]
-        else:
-            permission_classes = [IsAuthenticated]
+        from rest_framework.permissions import IsAuthenticated
         
-        return [permission() for permission in permission_classes]
+        if self.action == 'create':
+            return [IsAuthenticated(), IsSeller()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsSellerAndOwner()]
+        else:
+            return [IsAuthenticated()]
     
     def get_queryset(self):
         """
@@ -75,7 +75,38 @@ class AnimalListingViewSet(viewsets.ModelViewSet):
         Args:
             serializer: The validated serializer instance
         """
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Creating listing for user: {self.request.user.id}")
         serializer.save(seller=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        """Override update to add debug logging"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"UPDATE called by user {request.user.id} for listing {kwargs.get('pk')}")
+        logger.info(f"Request data: {request.data}")
+        try:
+            result = super().update(request, *args, **kwargs)
+            logger.info("Update successful")
+            return result
+        except Exception as e:
+            logger.error(f"Update failed: {str(e)}", exc_info=True)
+            raise
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Override partial_update to add debug logging"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"PARTIAL_UPDATE called by user {request.user.id} for listing {kwargs.get('pk')}")
+        logger.info(f"Request data: {request.data}")
+        try:
+            result = super().partial_update(request, *args, **kwargs)
+            logger.info("Partial update successful")
+            return result
+        except Exception as e:
+            logger.error(f"Partial update failed: {str(e)}", exc_info=True)
+            raise
     
     def perform_destroy(self, instance) -> None:
         """

@@ -91,7 +91,7 @@ export const uploadListingImages = async (listingId, images) => {
 
         try {
             const response = await apiClient.post(
-                `/api/animals/${listingId}/upload-image/`,
+                `/api/animals/${listingId}/images/`,
                 formData,
                 {
                     headers: {

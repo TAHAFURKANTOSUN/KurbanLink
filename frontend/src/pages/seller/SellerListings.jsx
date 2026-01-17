@@ -118,7 +118,11 @@ const SellerListings = () => {
                         <div className="listings-grid">
                             {listings.map(listing => (
                                 <div key={listing.id} className="listing-card">
-                                    <div className="listing-info">
+                                    <div
+                                        className="listing-info"
+                                        onClick={() => navigate(`/animals/${listing.id}`)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         <h3>{listing.breed}</h3>
                                         <span className="type-badge">{listing.animal_type}</span>
                                         <div className="details">
@@ -137,13 +141,19 @@ const SellerListings = () => {
                                     </div>
                                     <div className="listing-actions">
                                         <button
-                                            onClick={() => navigate(`/seller/listings/${listing.id}/edit`)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/seller/listings/${listing.id}/edit`);
+                                            }}
                                             className="edit-btn"
                                         >
                                             Düzenle
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(listing.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(listing.id);
+                                            }}
                                             className="delete-btn"
                                         >
                                             Sil

@@ -91,9 +91,9 @@ const EditListing = () => {
                 location: formData.location,
             };
 
-            if (formData.age) listingData.age = parseInt(formData.age);
-            if (formData.weight) listingData.weight = parseFloat(formData.weight);
-            if (formData.description) listingData.description = formData.description;
+            if (formData.age && formData.age !== '') listingData.age = parseInt(formData.age);
+            if (formData.weight && formData.weight !== '') listingData.weight = parseFloat(formData.weight);
+            if (formData.description && formData.description !== '') listingData.description = formData.description;
 
             await updateListing(id, listingData);
 

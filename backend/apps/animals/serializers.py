@@ -37,3 +37,8 @@ class AnimalListingSerializer(serializers.ModelSerializer):
             'created_at'
         ]
         read_only_fields = ['id', 'seller', 'seller_email', 'created_at']
+        extra_kwargs = {
+            'age': {'required': False, 'allow_null': True},
+            'weight': {'required': False, 'allow_null': True},
+            'description': {'required': False, 'allow_blank': True},
+        }
