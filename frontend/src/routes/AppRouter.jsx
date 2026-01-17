@@ -2,11 +2,21 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '../auth/AuthContext';
 import { FavoritesProvider } from '../context/FavoritesContext';
 import ProtectedRoute from '../auth/ProtectedRoute';
+import RoleProtectedRoute from '../auth/RoleProtectedRoute';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import AnimalsList from '../pages/AnimalsList';
 import AnimalDetail from '../pages/AnimalDetail';
 import Favorites from '../pages/Favorites';
+
+// Seller pages
+import SellerListings from '../pages/seller/SellerListings';
+import NewListing from '../pages/seller/NewListing';
+import EditListing from '../pages/seller/EditListing';
+
+// Butcher pages
+import ButcherProfile from '../pages/butcher/ButcherProfile';
+import ButcherAppointments from '../pages/butcher/ButcherAppointments';
 
 const AppRouter = () => {
     return (
@@ -14,8 +24,11 @@ const AppRouter = () => {
             <AuthProvider>
                 <FavoritesProvider>
                     <Routes>
+                        {/* Public routes */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+
+                        {/* Protected routes */}
                         <Route
                             path="/"
                             element={
@@ -40,6 +53,52 @@ const AppRouter = () => {
                                 </ProtectedRoute>
                             }
                         />
+
+                        {/* Seller routes */}
+                        <Route
+                            path="/seller/listings"
+                            element={
+                                <RoleProtectedRoute requiredRole="SELLER">
+                                    <SellerListings />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/seller/listings/new"
+                            element={
+                                <RoleProtectedRoute requiredRole="SELLER">
+                                    <NewListing />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/seller/listings/:id/edit"
+                            element={
+                                <RoleProtectedRoute requiredRole="SELLER">
+                                    <EditListing />
+                                </RoleProtectedRoute>
+                            }
+                        />
+
+                        {/* Butcher routes */}
+                        <Route
+                            path="/butcher/profile"
+                            element={
+                                <RoleProtectedRoute requiredRole="BUTCHER">
+                                    <ButcherProfile />
+                                </RoleProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/butcher/appointments"
+                            element={
+                                <RoleProtectedRoute requiredRole="BUTCHER">
+                                    <ButcherAppointments />
+                                </RoleProtectedRoute>
+                            }
+                        />
+
+                        {/* Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </FavoritesProvider>

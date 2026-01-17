@@ -124,10 +124,27 @@ const AnimalsList = () => {
     return (
         <div className="animals-container">
             <div className="animals-header">
-                <h1>Animal Listings</h1>
+                <h1>Hayvan İlanları</h1>
                 <div className="header-actions">
-                    <button onClick={() => navigate('/favorites')} className="favorites-link-btn">Favorites</button>
-                    <button onClick={logout} className="logout-btn">Logout</button>
+                    <button onClick={() => navigate('/favorites')} className="favorites-link-btn">
+                        ⭐ Favorilerim
+                    </button>
+                    {roles && roles.includes('SELLER') && (
+                        <button onClick={() => navigate('/seller/listings')} className="favorites-link-btn">
+                            📋 İlanlarım
+                        </button>
+                    )}
+                    {roles && roles.includes('BUTCHER') && (
+                        <>
+                            <button onClick={() => navigate('/butcher/appointments')} className="favorites-link-btn">
+                                📅 Randevularım
+                            </button>
+                            <button onClick={() => navigate('/butcher/profile')} className="favorites-link-btn">
+                                👤 Profil
+                            </button>
+                        </>
+                    )}
+                    <button onClick={logout} className="logout-btn">Çıkış Yap</button>
                 </div>
             </div>
 
