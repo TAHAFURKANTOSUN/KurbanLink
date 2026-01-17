@@ -7,7 +7,7 @@ export const fetchFavorites = async () => {
 
 export const createFavorite = async (listingId) => {
     const response = await apiClient.post('/api/favorites/', {
-        listing: listingId,
+        animal: listingId,   // ✅ backend'in beklediği field
     });
     return response.data;
 };
