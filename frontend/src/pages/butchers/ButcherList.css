@@ -1,0 +1,89 @@
+.butcher-list-page {
+    min-height: 100vh;
+    background-color: var(--bg-gray);
+    padding-bottom: 4rem;
+}
+
+.page-header {
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.butchers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 2rem;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    margin-top: 2rem;
+}
+
+.error-state p {
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.btn-retry {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-retry:hover {
+    background: var(--accent-hover);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--muted);
+    margin: 0 auto 1rem;
+}
+
+.empty-state p {
+    color: var(--muted);
+    font-size: 1.125rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .butchers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .butchers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+}

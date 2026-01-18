@@ -1,0 +1,79 @@
+.butcher-card {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.butcher-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.butcher-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.city {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.city::before {
+    content: "📍";
+}
+
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.service-badge {
+    background: var(--bg-gray);
+    color: var(--accent);
+    padding: 0.375rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.813rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+}
+
+.service-more {
+    color: var(--muted);
+    font-size: 0.813rem;
+    padding: 0.375rem 0.5rem;
+}
+
+.butcher-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.btn-book {
+    flex: 1;
+}
+
+.btn-view {
+    flex: 1;
+    background: var(--bg);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+}
+
+.btn-view:hover {
+    background: var(--bg-gray);
+}

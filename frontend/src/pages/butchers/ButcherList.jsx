@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import Navbar from '../../components/Navbar';
+import ButcherCard from '../../components/butchers/ButcherCard';
 import { fetchButcherProfiles } from '../../api/butchers';
-import './Butchers.css';
+import './ButcherList.css';
 
 const ButcherList = () => {
-    const navigate = useNavigate();
     const [butchers, setButchers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,103 +14,49 @@ const ButcherList = () => {
     }, []);
 
     const loadButchers = async () => {
-        setLoading(true);
-        setError(null);
-
         try {
             const data = await fetchButcherProfiles();
             setButchers(data);
         } catch (err) {
             console.error('Failed to load butchers:', err);
-            setError('Kasaplar yüklenemedi');
+            setError('Kasaplar yüklenirken bir hata oluştu.');
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="page">
-                <div className="page__container">
-                    <div className="butchers-header">
-                        <h1>Kasaplar</h1>
-                    </div>
-                    <div className="loading">Yükleniyor...</div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="page">
-                <div className="page__container">
-                    <div className="butchers-header">
-                        <h1>Kasaplar</h1>
-                    </div>
-                    <div className="form-card">
-                        <p className="error-message">{error}</p>
-                        <button onClick={loadButchers} className="submit-btn">Tekrar Dene</button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="page">
-            <div className="page__container">
-                <div className="butchers-header">
-                    <h1>Kasaplar</h1>
-                    <button onClick={() => navigate('/')} className="back-btn">← Geri</button>
+        <div className="butcher-list-page">
+            <Navbar />
+
+            <div className="container">
+                <div className="page-header">
+                    <h1>Kasap Bul</h1>
+                    <p className="subtitle">
+                        Güvenilir kasapları keşfedin ve randevu alın
+                    </p>
                 </div>
 
-                {butchers.length === 0 ? (
-                    <div className="form-card">
-                        <p className="empty-message">Şu anda kayıtlı kasap bulunmamaktadır.</p>
+                {loading ? (
+                    <div className="loading-state">Kasaplar yükleniyor...</div>
+                ) : error ? (
+                    <div className="error-state">
+                        <p>{error}</p>
+                        <button onClick={loadButchers} className="btn-retry">
+                            Tekrar Dene
+                        </button>
+                    </div>
+                ) : butchers.length === 0 ? (
+                    <div className="empty-state">
+                        <svg className="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <p>Henüz kayıtlı kasap bulunmamaktadır.</p>
                     </div>
                 ) : (
-                    <div className="butcher-grid">
+                    <div className="butchers-grid">
                         {butchers.map(butcher => (
-                            <div
-                                key={butcher.id}
-                                className="butcher-card"
-                                onClick={() => navigate(`/butchers/${butcher.id}`)}
-                            >
-                                <div className="butcher-info">
-                                    <h2>{butcher.business_name}</h2>
-                                    <div className="butcher-location">
-                                        📍 {butcher.city}
-                                    </div>
-                                    <div className="butcher-experience">
-                                        ⭐ {butcher.experience_years} yıl deneyim
-                                    </div>
-                                    {butcher.services && butcher.services.length > 0 && (
-                                        <div className="butcher-services">
-                                            <strong>Hizmetler:</strong>
-                                            <ul>
-                                                {butcher.services.map((service, idx) => (
-                                                    <li key={idx}>{service}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                    {butcher.rating && (
-                                        <div className="butcher-rating">
-                                            ⭐ {butcher.rating.toFixed(1)}
-                                        </div>
-                                    )}
-                                </div>
-                                <button
-                                    className="appointment-btn"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/butchers/${butcher.id}`);
-                                    }}
-                                >
-                                    Randevu Al
-                                </button>
-                            </div>
+                            <ButcherCard key={butcher.id} butcher={butcher} />
                         ))}
                     </div>
                 )}

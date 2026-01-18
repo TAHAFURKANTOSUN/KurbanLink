@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
 import { fetchButcherAppointments, approveAppointment, rejectAppointment } from '../../api/butchers';
-import './Butcher.css';
+import './ButcherAppointments.css';
 
 const ButcherAppointments = () => {
     const navigate = useNavigate();
@@ -9,6 +10,10 @@ const ButcherAppointments = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [actionLoading, setActionLoading] = useState({});
+
+    useEffect(() => {
+        loadAppointments();
+    }, []);
 
     const loadAppointments = async () => {
         setLoading(true);
@@ -19,18 +24,14 @@ const ButcherAppointments = () => {
             setAppointments(Array.isArray(data) ? data : data.results || []);
         } catch (err) {
             console.error('Failed to load appointments:', err);
-            setError('Randevular yüklenemedi');
+            setError('Randevular yüklenirken bir hata oluştu.');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        loadAppointments();
-    }, []);
-
     const handleApprove = async (id) => {
-        setActionLoading(prev => ({ ...prev, [id]: true }));
+        setActionLoading(prev => ({ ...prev, [id]: 'approve' }));
         try {
             await approveAppointment(id);
             await loadAppointments();
@@ -38,7 +39,7 @@ const ButcherAppointments = () => {
             console.error('Approve failed:', err);
             alert('Onaylama başarısız: ' + (err.response?.data?.detail || 'Bilinmeyen hata'));
         } finally {
-            setActionLoading(prev => ({ ...prev, [id]: false }));
+            setActionLoading(prev => ({ ...prev, [id]: null }));
         }
     };
 
@@ -47,7 +48,7 @@ const ButcherAppointments = () => {
             return;
         }
 
-        setActionLoading(prev => ({ ...prev, [id]: true }));
+        setActionLoading(prev => ({ ...prev, [id]: 'reject' }));
         try {
             await rejectAppointment(id);
             await loadAppointments();
@@ -55,28 +56,91 @@ const ButcherAppointments = () => {
             console.error('Reject failed:', err);
             alert('Reddetme başarısız: ' + (err.response?.data?.detail || 'Bilinmeyen hata'));
         } finally {
-            setActionLoading(prev => ({ ...prev, [id]: false }));
+            setActionLoading(prev => ({ ...prev, [id]: null }));
         }
     };
 
-    // Group appointments by status
-    const groupedAppointments = {
-        PENDING: appointments.filter(a => a.status === 'PENDING'),
-        APPROVED: appointments.filter(a => a.status === 'APPROVED'),
-        REJECTED: appointments.filter(a => a.status === 'REJECTED'),
-        CANCELLED: appointments.filter(a => a.status === 'CANCELLED')
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('tr-TR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     };
+
+    const formatTime = (timeStr) => {
+        return timeStr.substring(0, 5);
+    };
+
+    // Group appointments by status
+    const pending = appointments.filter(a => a.status === 'PENDING');
+    const approved = appointments.filter(a => a.status === 'APPROVED');
+    const rejected = appointments.filter(a => a.status === 'REJECTED');
+    const cancelled = appointments.filter(a => a.status === 'CANCELLED');
+
+    // Group approved by date
+    const approvedByDate = approved.reduce((acc, apt) => {
+        if (!acc[apt.date]) acc[apt.date] = [];
+        acc[apt.date].push(apt);
+        return acc;
+    }, {});
+
+    const renderAppointmentCard = (apt, showActions = false) => (
+        <div key={apt.id} className="appointment-card">
+            <div className="card-header">
+                <div className="date-time">
+                    <span className="date">📅 {formatDate(apt.date)}</span>
+                    <span className="time">🕐 {formatTime(apt.time)}</span>
+                </div>
+                <span className={`status-badge status-${apt.status.toLowerCase()}`}>
+                    {apt.status === 'PENDING' ? 'Beklemede' :
+                        apt.status === 'APPROVED' ? 'Onaylandı' :
+                            apt.status === 'REJECTED' ? 'Reddedildi' :
+                                'İptal Edildi'}
+                </span>
+            </div>
+
+            <div className="card-body">
+                <div className="info-row">
+                    <span className="label">Müşteri:</span>
+                    <span className="value">{apt.customer_email || apt.customer || 'Bilinmiyor'}</span>
+                </div>
+                {apt.notes && (
+                    <div className="info-row">
+                        <span className="label">Not:</span>
+                        <span className="value">{apt.notes}</span>
+                    </div>
+                )}
+            </div>
+
+            {showActions && (
+                <div className="card-actions">
+                    <button
+                        onClick={() => handleApprove(apt.id)}
+                        className="btn-approve"
+                        disabled={actionLoading[apt.id]}
+                    >
+                        {actionLoading[apt.id] === 'approve' ? 'Onaylanıyor...' : 'Onayla'}
+                    </button>
+                    <button
+                        onClick={() => handleReject(apt.id)}
+                        className="btn-reject"
+                        disabled={actionLoading[apt.id]}
+                    >
+                        {actionLoading[apt.id] === 'reject' ? 'Reddediliyor...' : 'Reddet'}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 
     if (loading) {
         return (
-            <div className="butcher-container">
-                <div className="butcher-header">
-                    <h1>Randevularım</h1>
-                </div>
-                <div className="page">
-                    <div className="page__container">
-                        <div className="loading">Yükleniyor...</div>
-                    </div>
+            <div className="butcher-appointments-page">
+                <Navbar />
+                <div className="container">
+                    <div className="loading-state">Randevular yükleniyor...</div>
                 </div>
             </div>
         );
@@ -84,16 +148,14 @@ const ButcherAppointments = () => {
 
     if (error) {
         return (
-            <div className="butcher-container">
-                <div className="butcher-header">
-                    <h1>Randevularım</h1>
-                </div>
-                <div className="page">
-                    <div className="page__container">
-                        <div className="form-card">
-                            <p className="error-message">{error}</p>
-                            <button onClick={loadAppointments} className="retry-btn">Tekrar Dene</button>
-                        </div>
+            <div className="butcher-appointments-page">
+                <Navbar />
+                <div className="container">
+                    <div className="error-state">
+                        <p>{error}</p>
+                        <button onClick={loadAppointments} className="btn-primary">
+                            Tekrar Dene
+                        </button>
                     </div>
                 </div>
             </div>
@@ -101,121 +163,73 @@ const ButcherAppointments = () => {
     }
 
     return (
-        <div className="butcher-container">
-            <div className="butcher-header">
-                <h1>Randevularım</h1>
-                <div className="header-actions">
-                    <button onClick={() => navigate('/butcher/profile')} className="nav-btn">
-                        Profil
-                    </button>
-                    <button onClick={() => navigate('/')} className="back-btn">← Geri</button>
+        <div className="butcher-appointments-page">
+            <Navbar />
+
+            <div className="container appointments-content">
+                <div className="page-header">
+                    <h1>Randevularım</h1>
+                    <p className="subtitle">Randevu taleplerinizi yönetin</p>
                 </div>
-            </div>
 
-            <div className="page">
-                <div className="page__container appointments-container">
-                    {appointments.length === 0 ? (
-                        <div className="form-card">
-                            <p className="empty-message">Henüz randevu yok.</p>
-                        </div>
-                    ) : (
-                        <div className="appointments-sections">
-                            {/* Pending Appointments */}
-                            {groupedAppointments.PENDING.length > 0 && (
-                                <div className="appointments-section">
-                                    <h2>Bekleyen Randevular</h2>
-                                    <div className="appointments-list">
-                                        {groupedAppointments.PENDING.map(apt => (
-                                            <div key={apt.id} className="appointment-card pending">
-                                                <div className="appointment-info">
-                                                    <p><strong>Tarih:</strong> {apt.date}</p>
-                                                    <p><strong>Saat:</strong> {apt.time}</p>
-                                                    <p><strong>Müşteri:</strong> {apt.customer_email || apt.customer}</p>
-                                                    {apt.animal_count && <p><strong>Hayvan Sayısı:</strong> {apt.animal_count}</p>}
-                                                    {apt.notes && <p><strong>Not:</strong> {apt.notes}</p>}
-                                                </div>
-                                                <div className="appointment-actions">
-                                                    <button
-                                                        onClick={() => handleApprove(apt.id)}
-                                                        className="approve-btn"
-                                                        disabled={actionLoading[apt.id]}
-                                                    >
-                                                        {actionLoading[apt.id] ? 'İşleniyor...' : 'Onayla'}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleReject(apt.id)}
-                                                        className="reject-btn"
-                                                        disabled={actionLoading[apt.id]}
-                                                    >
-                                                        {actionLoading[apt.id] ? 'İşleniyor...' : 'Reddet'}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                {appointments.length === 0 ? (
+                    <div className="empty-state">
+                        <svg className="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p>Henüz randevu talebi bulunmamaktadır.</p>
+                    </div>
+                ) : (
+                    <div className="appointments-sections">
+                        {/* Pending Section */}
+                        {pending.length > 0 && (
+                            <section className="appointments-section">
+                                <h2 className="section-title">
+                                    <span className="title-badge pending-badge">{pending.length}</span>
+                                    Bekleyen Talepler
+                                </h2>
+                                <div className="appointments-grid">
+                                    {pending.map(apt => renderAppointmentCard(apt, true))}
                                 </div>
-                            )}
+                            </section>
+                        )}
 
-                            {/* Approved Appointments */}
-                            {groupedAppointments.APPROVED.length > 0 && (
-                                <div className="appointments-section">
-                                    <h2>Onaylanan Randevular</h2>
-                                    <div className="appointments-list">
-                                        {groupedAppointments.APPROVED.map(apt => (
-                                            <div key={apt.id} className="appointment-card approved">
-                                                <div className="appointment-info">
-                                                    <p><strong>Tarih:</strong> {apt.date}</p>
-                                                    <p><strong>Saat:</strong> {apt.time}</p>
-                                                    <p><strong>Müşteri:</strong> {apt.customer_email || apt.customer}</p>
-                                                    {apt.animal_count && <p><strong>Hayvan Sayısı:</strong> {apt.animal_count}</p>}
-                                                </div>
-                                                <div className="status-badge approved">Onaylandı</div>
+                        {/* Approved Section */}
+                        {approved.length > 0 && (
+                            <section className="appointments-section">
+                                <h2 className="section-title">
+                                    <span className="title-badge approved-badge">{approved.length}</span>
+                                    Onaylanmış Randevular
+                                </h2>
+                                {Object.entries(approvedByDate)
+                                    .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+                                    .map(([date, apts]) => (
+                                        <div key={date} className="date-group">
+                                            <h3 className="date-header">{formatDate(date)}</h3>
+                                            <div className="appointments-grid">
+                                                {apts.map(apt => renderAppointmentCard(apt, false))}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                        </div>
+                                    ))}
+                            </section>
+                        )}
 
-                            {/* Rejected Appointments */}
-                            {groupedAppointments.REJECTED.length > 0 && (
-                                <div className="appointments-section">
-                                    <h2>Reddedilen Randevular</h2>
-                                    <div className="appointments-list">
-                                        {groupedAppointments.REJECTED.map(apt => (
-                                            <div key={apt.id} className="appointment-card rejected">
-                                                <div className="appointment-info">
-                                                    <p><strong>Tarih:</strong> {apt.date}</p>
-                                                    <p><strong>Saat:</strong> {apt.time}</p>
-                                                    <p><strong>Müşteri:</strong> {apt.customer_email || apt.customer}</p>
-                                                </div>
-                                                <div className="status-badge rejected">Reddedildi</div>
-                                            </div>
-                                        ))}
-                                    </div>
+                        {/* Rejected/Cancelled Section */}
+                        {(rejected.length > 0 || cancelled.length > 0) && (
+                            <section className="appointments-section">
+                                <h2 className="section-title">
+                                    <span className="title-badge rejected-badge">
+                                        {rejected.length + cancelled.length}
+                                    </span>
+                                    Reddedilen / İptal Edilen
+                                </h2>
+                                <div className="appointments-grid">
+                                    {[...rejected, ...cancelled].map(apt => renderAppointmentCard(apt, false))}
                                 </div>
-                            )}
-
-                            {/* Cancelled Appointments */}
-                            {groupedAppointments.CANCELLED.length > 0 && (
-                                <div className="appointments-section">
-                                    <h2>İptal Edilen Randevular</h2>
-                                    <div className="appointments-list">
-                                        {groupedAppointments.CANCELLED.map(apt => (
-                                            <div key={apt.id} className="appointment-card cancelled">
-                                                <div className="appointment-info">
-                                                    <p><strong>Tarih:</strong> {apt.date}</p>
-                                                    <p><strong>Saat:</strong> {apt.time}</p>
-                                                    <p><strong>Müşteri:</strong> {apt.customer_email || apt.customer}</p>
-                                                </div>
-                                                <div className="status-badge cancelled">İptal Edildi</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                            </section>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
