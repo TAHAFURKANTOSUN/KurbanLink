@@ -21,7 +21,7 @@ const Navbar = () => {
 
                 <div className="navbar-menu">
                     <Link to="/" className="nav-link">Ana Sayfa</Link>
-                    <Link to="/coming-soon" className="nav-link">Kurban Ortaklığı</Link>
+                    <Link to="/partnerships" className="nav-link">Kurban Ortaklığı</Link>
                     <Link to="/butchers" className="nav-link">Kasap Bul</Link>
                 </div>
 

@@ -64,3 +64,17 @@ export const notificationTypeLabel = (type) => {
     };
     return map[type?.toUpperCase()] || type;
 };
+
+/**
+ * Convert partnership status code to Turkish label
+ * @param {string} code - Status code
+ * @returns {string} Turkish label  
+ */
+export const partnershipStatusLabel = (code) => {
+    const map = {
+        'OPEN': 'Açık',
+        'CLOSED': 'Kapalı'
+    };
+    return map[code?.toUpperCase()] || code;
+};
+

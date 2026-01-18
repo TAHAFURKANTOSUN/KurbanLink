@@ -49,7 +49,7 @@ const AnimalDetail = () => {
 
     useEffect(() => {
         loadListing();
-    }, [id]);
+    }, [id]); // Critical: id dependency ensures fresh load on navigation
 
     const handleFavoriteToggle = async () => {
         setFavoriteError(null);

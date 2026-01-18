@@ -14,6 +14,9 @@ import AnimalDetail from '../pages/AnimalDetail';
 import Favorites from '../pages/Favorites';
 import ComingSoon from '../pages/ComingSoon';
 
+// Partnerships
+import Partnerships from '../pages/partnerships/Partnerships';
+
 // Seller pages
 import SellerListings from '../pages/seller/SellerListings';
 import NewListing from '../pages/seller/NewListing';
@@ -78,6 +81,9 @@ const AppRouter = () => {
                         {/* Butcher routes */}
                         <Route path="/butcher/profile" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherProfile /></RoleProtectedRoute>} />
                         <Route path="/butcher/appointments" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherAppointments /></RoleProtectedRoute>} />
+
+                        {/* Partnerships route */}
+                        <Route path="/partnerships" element={<RoleProtectedRoute requiredRole="BUYER"><Partnerships /></RoleProtectedRoute>} />
 
                         {/* Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />

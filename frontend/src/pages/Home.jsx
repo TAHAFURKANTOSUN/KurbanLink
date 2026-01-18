@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import HomeHero from '../components/home/HomeHero';
 import FeaturedSection from '../components/home/FeaturedSection';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
+import { useAuth } from '../auth/AuthContext';
 import './Home.css';
 
 const Home = () => {
+    const { user } = useAuth();
     const [featuredListings, setFeaturedListings] = useState([]);
     const [images, setImages] = useState({});
     const [breeds, setBreeds] = useState([]);
@@ -54,6 +57,22 @@ const Home = () => {
         <div className="home-page">
             <Navbar />
             <HomeHero breeds={breeds} />
+
+            {/* Seller CTAs */}
+            {user?.roles?.includes('SELLER') && (
+                <section className="seller-ctas">
+                    <div className="container">
+                        <div className="cta-buttons">
+                            <Link to="/seller/listings/new" className="btn-primary btn-cta">
+                                ➕ İlan Oluştur
+                            </Link>
+                            <Link to="/seller/listings" className="btn-secondary btn-cta">
+                                📋 İlanlarım
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {loading ? (
                 <div className="container loading-container">
