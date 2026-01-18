@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -19,7 +19,17 @@ const AnimalDetail = () => {
     const [notFound, setNotFound] = useState(false);
     const [favoriteError, setFavoriteError] = useState(null);
 
+    // Use ref to track latest request ID to prevent race conditions
+    const requestIdRef = useRef(0);
+
     const loadListing = async () => {
+        // Increment request ID for this new request
+        const currentRequestId = ++requestIdRef.current;
+
+        // Immediately clear stale data and set loading state
+        setListing(null);
+        setImages([]);
+        setSelectedImage(null);
         setLoading(true);
         setError(null);
         setNotFound(false);
@@ -30,20 +40,29 @@ const AnimalDetail = () => {
                 fetchAnimalImages(id).catch(() => []) // Don't fail on image errors
             ]);
 
-            setListing(listingData);
-            setImages(imagesData);
+            // Only update state if this is still the latest request
+            if (currentRequestId === requestIdRef.current) {
+                setListing(listingData);
+                setImages(imagesData);
 
-            // Set primary image or first image
-            const primary = imagesData.find(img => img.is_primary);
-            setSelectedImage(primary || imagesData[0] || null);
+                // Set primary image or first image
+                const primary = imagesData.find(img => img.is_primary);
+                setSelectedImage(primary || imagesData[0] || null);
+            }
         } catch (err) {
-            if (err.response?.status === 404) {
-                setNotFound(true);
-            } else {
-                setError(err.response?.data?.detail || 'Failed to load listing');
+            // Only update error state if this is still the latest request
+            if (currentRequestId === requestIdRef.current) {
+                if (err.response?.status === 404) {
+                    setNotFound(true);
+                } else {
+                    setError(err.response?.data?.detail || 'İlan yüklenemedi.');
+                }
             }
         } finally {
-            setLoading(false);
+            // Only update loading state if this is still the latest request
+            if (currentRequestId === requestIdRef.current) {
+                setLoading(false);
+            }
         }
     };
 

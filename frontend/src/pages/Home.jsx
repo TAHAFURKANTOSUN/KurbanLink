@@ -8,7 +8,7 @@ import { useAuth } from '../auth/AuthContext';
 import './Home.css';
 
 const Home = () => {
-    const { user } = useAuth();
+    const { user, isInitializing } = useAuth();
     const [featuredListings, setFeaturedListings] = useState([]);
     const [images, setImages] = useState({});
     const [breeds, setBreeds] = useState([]);
@@ -58,8 +58,8 @@ const Home = () => {
             <Navbar />
             <HomeHero breeds={breeds} />
 
-            {/* Seller CTAs */}
-            {user?.roles?.includes('SELLER') && (
+            {/* Seller CTAs - only show after auth initialization to prevent flicker */}
+            {!isInitializing && user?.roles?.includes('SELLER') && (
                 <section className="seller-ctas">
                     <div className="container">
                         <div className="cta-buttons">

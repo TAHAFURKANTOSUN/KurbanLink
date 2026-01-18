@@ -7,9 +7,13 @@ class PartnershipListing(models.Model):
     """
     Partnership listing for buyers seeking kurban partners
     """
+    # Status constants
+    OPEN = 'OPEN'
+    CLOSED = 'CLOSED'
+    
     STATUS_CHOICES = [
-        ('OPEN', 'Open'),
-        ('CLOSED', 'Closed'),
+        (OPEN, 'Open'),
+        (CLOSED, 'Closed'),
     ]
     
     creator = models.ForeignKey(
@@ -40,7 +44,7 @@ class PartnershipListing(models.Model):
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default='OPEN'
+        default=OPEN
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

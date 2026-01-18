@@ -21,7 +21,7 @@ class PartnershipListingViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """Filter queryset based on query params"""
-        queryset = PartnershipListing.objects.filter(status='OPEN')
+        queryset = PartnershipListing.objects.filter(status=PartnershipListing.OPEN)
         
         # Filter by city
         city = self.request.query_params.get('city')
@@ -38,12 +38,18 @@ class PartnershipListingViewSet(viewsets.ModelViewSet):
         return queryset
     
     def get_permissions(self):
-        """Set permissions based on action"""
-        if self.action in ['create']:
+        """
+        Set permissions based on action.
+        All actions require BUYER role to match product requirements.
+        """
+        if self.action in ['list', 'retrieve', 'create']:
+            # Browse and create: BUYER only
             return [IsAuthenticated(), IsBuyer()]
         if self.action in ['update', 'partial_update', 'destroy', 'close']:
+            # Modify/close: BUYER + must be creator
             return [IsAuthenticated(), IsBuyer(), IsCreator()]
-        return [IsAuthenticated()]
+        # Default: authenticated BUYER
+        return [IsAuthenticated(), IsBuyer()]
     
     def perform_create(self, serializer):
         """Set creator to current user"""
@@ -53,7 +59,7 @@ class PartnershipListingViewSet(viewsets.ModelViewSet):
     def close(self, request, pk=None):
         """Close a partnership listing"""
         partnership = self.get_object()
-        partnership.status = 'CLOSED'
+        partnership.status = PartnershipListing.CLOSED
         partnership.save()
         serializer = self.get_serializer(partnership)
         return Response(serializer.data)

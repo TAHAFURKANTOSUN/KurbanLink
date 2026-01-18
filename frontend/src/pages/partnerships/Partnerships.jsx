@@ -36,12 +36,37 @@ const Partnerships = () => {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [partnershipsData, animalsData] = await Promise.all([
-                fetchPartnerships(),
-                fetchAnimals({ page: 1 }).catch(() => ({ results: [] }))
-            ]);
+
+            // Fetch partnerships
+            const partnershipsData = await fetchPartnerships();
             setPartnerships(Array.isArray(partnershipsData) ? partnershipsData : partnershipsData.results || []);
-            setAnimals(animalsData.results || []);
+
+            // Fetch multiple pages of animals for dropdown (up to 5 pages max)
+            const allAnimals = [];
+            let page = 1;
+            const maxPages = 5;
+
+            while (page <= maxPages) {
+                try {
+                    const animalsData = await fetchAnimals({ page });
+
+                    if (animalsData.results && animalsData.results.length > 0) {
+                        allAnimals.push(...animalsData.results);
+                    }
+
+                    // Stop if no more pages
+                    if (!animalsData.next) {
+                        break;
+                    }
+
+                    page++;
+                } catch (err) {
+                    console.error(`Failed to fetch animals page ${page}:`, err);
+                    break;
+                }
+            }
+
+            setAnimals(allAnimals);
         } catch (err) {
             console.error('Failed to load partnerships:', err);
             setError('Veriler yüklenirken bir hata oluştu.');
