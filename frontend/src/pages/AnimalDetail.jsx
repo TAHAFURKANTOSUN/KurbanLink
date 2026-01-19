@@ -204,26 +204,41 @@ const AnimalDetail = () => {
                     <div className="title-actions">
                         <h1>{listing.title || listing.breed || 'İsimsiz İlan'}</h1>
                         <div className="action-buttons">
-                            <button
-                                className={`favorite-btn-large ${favorited ? 'favorited' : ''}`}
-                                onClick={handleFavoriteToggle}
-                                disabled={isTogglingFavorite}
-                                title={favorited ? 'Favorilerden çıkar' : 'Favorilere ekle'}
-                            >
-                                {favorited ? '★ Favorilerde' : '☆ Favorilere Ekle'}
-                            </button>
-                            {(!user || user.email !== listing.seller) && (
-                                <button
-                                    className="messaging-btn"
-                                    onClick={handleStartConversation}
-                                    disabled={messagingLoading}
-                                    title="Satıcı ile mesajlaş"
-                                >
-                                    {messagingLoading ? 'Yükleniyor...' : '💬 Mesajlaş'}
-                                </button>
-                            )}
-                            {user?.email === listing.seller && (
-                                <div className="self-listing-note">Kendi ilanınıza mesaj gönderemezsiniz.</div>
+                            {/* Check if current user is the owner */}
+                            {user && user.id === listing.seller ? (
+                                /* Owner view: Show Edit button and view count */
+                                <>
+                                    <button
+                                        className="edit-btn"
+                                        onClick={() => navigate(`/seller/listings/${id}/edit`)}
+                                        title="İlanı düzenle"
+                                    >
+                                        ✏️ Düzenle
+                                    </button>
+                                    <div className="view-count">
+                                        👁️ {listing.view_count || 0} görüntülenme
+                                    </div>
+                                </>
+                            ) : (
+                                /* Non-owner view: Show Favorite and Message buttons */
+                                <>
+                                    <button
+                                        className={`favorite-btn-large ${favorited ? 'favorited' : ''}`}
+                                        onClick={handleFavoriteToggle}
+                                        disabled={isTogglingFavorite}
+                                        title={favorited ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+                                    >
+                                        {favorited ? '★ Favorilerde' : '☆ Favorilere Ekle'}
+                                    </button>
+                                    <button
+                                        className="messaging-btn"
+                                        onClick={handleStartConversation}
+                                        disabled={messagingLoading}
+                                        title="Satıcı ile mesajlaş"
+                                    >
+                                        {messagingLoading ? 'Yükleniyor...' : '💬 Mesajlaş'}
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -256,10 +271,13 @@ const AnimalDetail = () => {
                                 <span className="value">{listing.weight} kg</span>
                             </div>
                         )}
-                        <div className="info-item">
-                            <span className="label">Satıcı</span>
-                            <span className="value seller">{listing.seller_email}</span>
-                        </div>
+                        {/* Only show seller info if not the owner */}
+                        {(!user || user.id !== listing.seller) && (
+                            <div className="info-item">
+                                <span className="label">Satıcı</span>
+                                <span className="value seller">{listing.seller_username || listing.seller_email}</span>
+                            </div>
+                        )}
                         <div className="info-item">
                             <span className="label">Eklenme Tarihi</span>
                             <span className="value">{new Date(listing.created_at).toLocaleDateString()}</span>

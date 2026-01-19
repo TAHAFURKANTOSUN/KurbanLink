@@ -85,8 +85,12 @@ class AnimalImageViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         
-        # Check ownership via IsSellerAndOwner permission on the listing
-        self.check_object_permissions(request, instance.listing)
+        # Check if user is the seller of the listing
+        if instance.listing.seller != request.user:
+            return Response(
+                {'detail': 'You do not have permission to delete this image.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
         
         # Delete the file and database record
         instance.image.delete(save=False)

@@ -82,6 +82,24 @@ class AnimalListingViewSet(viewsets.ModelViewSet):
     def perform_partial_update(self, serializer):
         """Partial update the listing."""
         serializer.save()
+    
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve a listing and increment view count.
+        Skips increment if the requester is the owner.
+        """
+        instance = self.get_object()
+        
+        # Only increment view count if user is not the owner
+        if not request.user.is_authenticated or request.user != instance.seller:
+            # Use F() expression to avoid race conditions
+            from django.db.models import F
+            AnimalListing.objects.filter(pk=instance.pk).update(view_count=F('view_count') + 1)
+            # Refresh instance to get updated view_count
+            instance.refresh_from_db()
+        
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         """

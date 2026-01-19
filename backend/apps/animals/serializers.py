@@ -42,6 +42,7 @@ class AnimalListingSerializer(serializers.ModelSerializer):
             'company',
             'description',
             'is_active',
+            'view_count',
             'created_at',
         ]
         read_only_fields = ['id', 'seller', 'created_at']

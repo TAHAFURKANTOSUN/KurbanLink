@@ -35,3 +35,8 @@ export const fetchAnimalImages = async (listingId) => {
     const response = await apiClient.get(`/api/animals/${listingId}/images/`);
     return response.data;
 };
+
+export const deleteAnimalImage = async (imageId) => {
+    const response = await apiClient.delete(`/api/animals/images/${imageId}/`);
+    return response.data;
+};

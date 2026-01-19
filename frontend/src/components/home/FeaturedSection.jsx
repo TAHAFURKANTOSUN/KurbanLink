@@ -15,16 +15,6 @@ const FeaturedSection = ({ listings = [], images = {} }) => {
     return (
         <section className="featured-section">
             <div className="container">
-                <div className="section-header">
-                    <h2>Öne Çıkan İlanlar</h2>
-                    <Link to="/search" className="link-search">
-                        Detaylı Arama
-                        <svg className="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </Link>
-                </div>
-
                 <div className="featured-grid">
                     {listings.map((listing, index) => (
                         <ListingCard

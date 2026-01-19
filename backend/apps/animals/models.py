@@ -154,6 +154,10 @@ class AnimalListing(models.Model):
         default=True,
         help_text="Whether this listing is currently active"
     )
+    view_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of times this listing has been viewed"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):

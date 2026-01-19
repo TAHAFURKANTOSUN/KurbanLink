@@ -17,6 +17,7 @@ const EditListing = () => {
         description: ''
     });
     const [selectedImages, setSelectedImages] = useState([]);
+    const [existingImages, setExistingImages] = useState([]);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -46,6 +47,11 @@ const EditListing = () => {
                     location: listing.location || '',
                     description: listing.description || ''
                 });
+
+                // Load existing images
+                const { fetchAnimalImages } = await import('../../api/animals');
+                const images = await fetchAnimalImages(id);
+                setExistingImages(images || []);
             } catch (err) {
                 console.error('Failed to load listing:', err);
                 alert('İlan yüklenemedi');
@@ -86,14 +92,27 @@ const EditListing = () => {
     };
 
     const handleRemoveImage = (index) => {
-        setSelectedImages(prev => {
-            const newImages = [...prev];
-            URL.revokeObjectURL(newImages[index].preview);
-            newImages.splice(index, 1);
-            return newImages;
-        });
+        const newImages = selectedImages.filter((_, i) => i !== index);
+        // Revoke the object URL to free memory
+        if (selectedImages[index]?.preview) {
+            URL.revokeObjectURL(selectedImages[index].preview);
+        }
+        setSelectedImages(newImages);
     };
 
+    const handleDeleteExistingImage = async (imageId) => {
+        try {
+            const { deleteAnimalImage } = await import('../../api/animals');
+            await deleteAnimalImage(imageId);
+            // Remove from state
+            setExistingImages(existingImages.filter(img => img.id !== imageId));
+        } catch (err) {
+            console.error('Failed to delete image:', err);
+            alert('Resim silinemedi. Lütfen tekrar deneyin.');
+        }
+    };
+
+    // Drag handlers for reordering newImages
     const handleDragStart = (e, index) => {
         setDraggedIndex(index);
         e.dataTransfer.effectAllowed = "move";
@@ -355,6 +374,40 @@ const EditListing = () => {
                                     rows="4"
                                 />
                             </div>
+
+                            {/* Existing Images Section */}
+                            {existingImages.length > 0 && (
+                                <div className="form-group">
+                                    <label className="form-label">Mevcut Resimler</label>
+                                    <div className="image-uploader">
+                                        <div className="image-uploader__grid">
+                                            {existingImages.map((image, idx) => (
+                                                <div
+                                                    key={image.id}
+                                                    className={`image-uploader__item ${image.is_primary ? 'is-primary' : ''}`}
+                                                >
+                                                    <img
+                                                        src={image.image_url}
+                                                        alt={`Existing ${idx}`}
+                                                        className="image-uploader__thumb"
+                                                    />
+                                                    {image.is_primary && (
+                                                        <div className="image-uploader__badge">Ana Görsel</div>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteExistingImage(image.id)}
+                                                        className="image-uploader__remove"
+                                                        aria-label="Remove image"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="form-group">
                                 <label className="form-label">Yeni Resimler Ekle (En fazla 20)</label>

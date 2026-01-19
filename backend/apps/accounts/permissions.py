@@ -64,10 +64,15 @@ class IsOwner(BasePermission):
         Check if the requesting user is the owner of the object.
         
         Checks 'seller' field first (for listings), then 'user' field.
+        For images, checks listing.seller.
         """
         # Check seller field (for AnimalListing)
         if hasattr(obj, 'seller'):
             return obj.seller == request.user
+        
+        # Check listing.seller field (for AnimalImage)
+        if hasattr(obj, 'listing') and hasattr(obj.listing, 'seller'):
+            return obj.listing.seller == request.user
         
         # Check user field (for other models)
         if hasattr(obj, 'user'):
