@@ -101,12 +101,53 @@
     text-decoration: underline;
 }
 
+.butcher-fields {
+    margin-top: var(--space-2);
+    padding: var(--space-2);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
 }
 
-.subtitle {
-    text-align: center;
-    color: #7f8c8d;
-    margin-bottom: 1.5rem;
+.butcher-fields h3 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-lg);
+}
+
+.butcher-fields .form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Phone input with inline country code selector */
+.phone-input-group {
+    display: flex;
+    gap: 0;
+}
+
+.phone-input-group .country-code-select {
+    width: 140px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    border-right: none;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.phone-input-group .country-code-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    z-index: 1;
+}
+
+.phone-input-group input[type="tel"] {
+    flex: 1;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.phone-input-group input[type="tel"]:focus {
+    z-index: 1;
 }
 
 .form-group {

@@ -1,80 +1,57 @@
 /**
- * Centralized label mappings for Turkish localization
- * Single source of truth for all user-facing labels
+ * Label mappings for enum values (Turkish).
  */
 
-/**
- * Convert role code to Turkish label
- * @param {string} code - Role code (BUYER, SELLER, BUTCHER)
- * @returns {string} Turkish label
- */
-export const roleLabel = (code) => {
+export const animalTypeLabel = (type) => {
     const map = {
-        'BUYER': 'Alıcı',
-        'SELLER': 'Satıcı',
-        'BUTCHER': 'Kasap'
+        SMALL: 'Küçükbaş',
+        BUYUKBAS: 'Büyükbaş',
+        KUCUKBAS: 'Küçükbaş',
     };
-    return map[code?.toUpperCase()] || code;
+    return map[type] || type;
 };
 
-/**
- * Convert animal type code to Turkish label
- * @param {string} code - Animal type code
- * @returns {string} Turkish label
- */
-export const animalTypeLabel = (code) => {
+export const speciesLabel = (species) => {
     const map = {
-        'SMALL': 'Küçükbaş',
-        'KUCUKBAS': 'Küçükbaş',
-        'LARGE': 'Büyükbaş',
-        'BUYUKBAS': 'Büyükbaş'
+        KOYUN: 'Koyun',
+        KECI: 'Keçi',
+        DANA: 'Dana',
+        INEK: 'İnek',
     };
-    return map[code?.toUpperCase()] || code;
+    return map[species] || 'Bilinmiyor';
 };
 
-/**
- * Convert appointment status code to Turkish label
- * @param {string} code - Status code
- * @returns {string} Turkish label
- */
-export const appointmentStatusLabel = (code) => {
+export const genderLabel = (gender) => {
     const map = {
-        'PENDING': 'Beklemede',
-        'APPROVED': 'Onaylandı',
-        'REJECTED': 'Reddedildi',
-        'CANCELLED': 'İptal Edildi'
+        ERKEK: 'Erkek',
+        DISI: 'Dişi',
     };
-    return map[code?.toUpperCase()] || code;
+    return map[gender] || '-';
 };
 
-/**
- * Convert notification type to Turkish label
- * @param {string} type - Notification type
- * @returns {string} Turkish label
- */
-export const notificationTypeLabel = (type) => {
+export const partnershipStatusLabel = (status) => {
     const map = {
-        'NEW_MESSAGE': 'Yeni Mesaj',
-        'PRICE_CHANGED': 'Fiyat Değişti',
-        'APPOINTMENT_APPROVED': 'Randevu Onaylandı',
-        'APPOINTMENT_REJECTED': 'Randevu Reddedildi',
-        'APPOINTMENT_CANCELLED': 'Randevu İptal Edildi',
-        'NEW_LISTING': 'Yeni İlan',
-        'LISTING_UPDATED': 'İlan Güncellendi'
+        OPEN: 'Açık',
+        CLOSED: 'Kapandı',
     };
-    return map[type?.toUpperCase()] || type;
+    return map[status] || status;
 };
 
-/**
- * Convert partnership status code to Turkish label
- * @param {string} code - Status code
- * @returns {string} Turkish label  
- */
-export const partnershipStatusLabel = (code) => {
+export const roleLabel = (role) => {
     const map = {
-        'OPEN': 'Açık',
-        'CLOSED': 'Kapalı'
+        BUYER: 'Alıcı',
+        SELLER: 'Satıcı',
+        BUTCHER: 'Kasap',
     };
-    return map[code?.toUpperCase()] || code;
+    return map[role] || role;
 };
 
+export const formatTRY = (amount) => {
+    if (amount == null) return '-';
+    return new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: 'TRY',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+};

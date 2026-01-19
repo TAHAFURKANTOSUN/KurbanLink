@@ -8,15 +8,56 @@ from .models import AnimalListing, AnimalImage
 
 @admin.register(AnimalListing)
 class AnimalListingAdmin(admin.ModelAdmin):
-    """
-    Admin interface for AnimalListing model.
-    """
+    """Admin for animal listings with comprehensive column display."""
+    list_display = [
+        'id',
+        'seller_username',
+        'contact_info',
+        'description_short',
+        'species',
+        'breed',
+        'gender',
+        'age_months',
+        'weight',
+        'price',
+        'ear_tag_no',
+        'city_district',
+        'company',
+        'created_at',
+        'is_active',
+    ]
+    list_filter = ['species', 'gender', 'is_active', 'city', 'created_at']
+    search_fields = ['seller__username', 'seller__email', 'breed', 'ear_tag_no', 'city', 'district']
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'animal_type']
     
-    list_display = ('animal_type', 'breed', 'seller', 'price', 'location', 'is_active', 'created_at')
-    list_filter = ('animal_type', 'is_active', 'created_at')
-    search_fields = ('breed', 'seller__email', 'location', 'description')
-    ordering = ('-created_at',)
-    readonly_fields = ('created_at',)
+    def seller_username(self, obj):
+        """İlan Veren username."""
+        return obj.seller.username if obj.seller else '-'
+    seller_username.short_description = 'İlan Veren'
+    
+    def contact_info(self, obj):
+        """İletişim (phone + email)."""
+        if obj.seller:
+            return f"{obj.seller.phone_number} / {obj.seller.email}"
+        return '-'
+    contact_info.short_description = 'İletişim'
+    
+    def description_short(self, obj):
+        """Açıklama (first 50 chars)."""
+        if obj.description:
+            return obj.description[:50] + '...' if len(obj.description) > 50 else obj.description
+        return '-'
+    description_short.short_description = 'Açıklama'
+    
+    def city_district(self, obj):
+        """Şehir / İlçe combined."""
+        if obj.city and obj.district:
+            return f"{obj.city} / {obj.district}"
+        elif obj.location:
+            return obj.location
+        return '-'
+    city_district.short_description = 'Şehir / İlçe'
     
     fieldsets = (
         ('Animal Information', {

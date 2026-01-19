@@ -7,29 +7,38 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Role, UserRole
 
 
+class UserRoleInline(admin.TabularInline):
+    """Inline for managing user roles within User admin."""
+    model = UserRole
+    extra = 1
+    fields = ['role', 'is_active', 'assigned_at']
+    readonly_fields = ['assigned_at']
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    """
-    Admin interface for custom User model.
-    """
-    
-    list_display = ('email', 'is_staff', 'is_active', 'date_joined')
-    list_filter = ('is_staff', 'is_active')
-    search_fields = ('email',)
-    ordering = ('email',)
+    """Admin for custom User model."""
+    list_display = ['email', 'username', 'phone_number', 'country_code', 'is_staff', 'is_active', 'date_joined']
+    list_filter = ['is_staff', 'is_active', 'country_code']
+    search_fields = ['email', 'username', 'phone_number']
+    ordering = ['-date_joined']
     
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Personal Info', {'fields': ('username', 'phone_number', 'country_code')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active'),
+            'fields': ('email', 'username', 'phone_number', 'country_code', 'password1', 'password2', 'is_staff', 'is_active'),
         }),
     )
+    
+    readonly_fields = ['date_joined', 'last_login']
+    inlines = [UserRoleInline]
 
 
 @admin.register(Role)

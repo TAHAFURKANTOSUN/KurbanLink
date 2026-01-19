@@ -6,12 +6,16 @@ import './Seller.css';
 const NewListing = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        animal_type: 'KUCUKBAS',
+        species: 'KOYUN',
         breed: '',
-        age: '',
+        gender: '',
+        age_months: '',
         weight: '',
         price: '',
-        location: '',
+        city: '',
+        district: '',
+        ear_tag_no: '',
+        company: '',
         description: ''
     });
     const [selectedImages, setSelectedImages] = useState([]);
@@ -38,12 +42,13 @@ const NewListing = () => {
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.breed.trim()) newErrors.breed = 'Cins gereklidir';
+
+        if (!formData.species) newErrors.species = 'Hayvan türü gereklidir';
+        if (!formData.age_months) newErrors.age_months = 'Yaş gereklidir';
+        if (!formData.weight) newErrors.weight = 'Ağırlık gereklidir';
         if (!formData.price) newErrors.price = 'Fiyat gereklidir';
-        if (formData.price && isNaN(formData.price)) newErrors.price = 'Geçerli bir fiyat girin';
-        if (!formData.location.trim()) newErrors.location = 'Konum gereklidir';
-        if (formData.age && isNaN(formData.age)) newErrors.age = 'Geçerli bir yaş girin';
-        if (formData.weight && isNaN(formData.weight)) newErrors.weight = 'Geçerli bir ağırlık girin';
+        if (!formData.city) newErrors.city = 'Şehir gereklidir';
+        if (!formData.district) newErrors.district = 'İlçe gereklidir';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;

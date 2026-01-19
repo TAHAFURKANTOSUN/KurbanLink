@@ -39,17 +39,14 @@ class PartnershipListingViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         """
-        Set permissions based on action.
-        All actions require BUYER role to match product requirements.
+        All authenticated users can list, retrieve, and create partnerships.
+        Only the creator can close, update, or delete.
         """
         if self.action in ['list', 'retrieve', 'create']:
-            # Browse and create: BUYER only
-            return [IsAuthenticated(), IsBuyer()]
-        if self.action in ['update', 'partial_update', 'destroy', 'close']:
-            # Modify/close: BUYER + must be creator
-            return [IsAuthenticated(), IsBuyer(), IsCreator()]
-        # Default: authenticated BUYER
-        return [IsAuthenticated(), IsBuyer()]
+            return [IsAuthenticated()]
+        elif self.action in ['close', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsCreator()]
+        return [IsAuthenticated()]
     
     def perform_create(self, serializer):
         """Set creator to current user"""
