@@ -43,54 +43,51 @@ import ProfileEdit from '../pages/ProfileEdit';
 
 const AppRouter = () => {
     return (
-        <BrowserRouter>
-            <AuthProvider>
-                <FavoritesProvider>
-                    <Routes>
-                        {/* Public routes */}
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+        <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-                        {/* Protected routes */}
-                        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                        <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
-                        <Route path="/coming-soon" element={<ProtectedRoute><ComingSoon /></ProtectedRoute>} />
-                        <Route path="/animals/:id" element={<ProtectedRoute><AnimalDetail /></ProtectedRoute>} />
-                        <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+            {/* Protected routes */}
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
-                        {/* Messages routes */}
-                        <Route path="/messages" element={<ProtectedRoute><ConversationList /></ProtectedRoute>} />
-                        <Route path="/messages/:conversationId" element={<ProtectedRoute><ConversationDetail /></ProtectedRoute>} />
+            {/* Protected routes */}
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+            <Route path="/coming-soon" element={<ProtectedRoute><ComingSoon /></ProtectedRoute>} />
+            <Route path="/animals/:id" element={<ProtectedRoute><AnimalDetail /></ProtectedRoute>} />
+            <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
 
-                        {/* Notifications */}
-                        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            {/* Messages routes */}
+            <Route path="/messages" element={<ProtectedRoute><ConversationList /></ProtectedRoute>} />
+            <Route path="/messages/:conversationId" element={<ProtectedRoute><ConversationDetail /></ProtectedRoute>} />
 
-                        {/* Profile */}
-                        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                        <Route path="/profile/edit" element={<ProtectedRoute><ProfileEdit /></ProtectedRoute>} />
+            {/* Notifications */}
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
-                        {/* Seller routes */}
-                        <Route path="/seller/listings" element={<ProtectedRoute><SellerListings /></ProtectedRoute>} />
-                        <Route path="/seller/listings/new" element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
-                        <Route path="/seller/listings/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
+            {/* Profile */}
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/profile/edit" element={<ProtectedRoute><ProfileEdit /></ProtectedRoute>} />
 
-                        {/* Butcher discovery routes */}
-                        <Route path="/butchers" element={<ProtectedRoute><ButcherList /></ProtectedRoute>} />
-                        <Route path="/butchers/:id" element={<ProtectedRoute><ButcherDetail /></ProtectedRoute>} />
-                        <Route path="/butchers/:id/book" element={<ProtectedRoute><AppointmentBooking /></ProtectedRoute>} />
+            {/* Seller routes */}
+            <Route path="/seller/listings" element={<ProtectedRoute><SellerListings /></ProtectedRoute>} />
+            <Route path="/seller/listings/new" element={<ProtectedRoute><NewListing /></ProtectedRoute>} />
+            <Route path="/seller/listings/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
 
-                        {/* Butcher routes */}
-                        <Route path="/butcher/appointments" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherAppointments /></RoleProtectedRoute>} />
+            {/* Butcher discovery routes */}
+            <Route path="/butchers" element={<ProtectedRoute><ButcherList /></ProtectedRoute>} />
+            <Route path="/butchers/:id" element={<ProtectedRoute><ButcherDetail /></ProtectedRoute>} />
+            <Route path="/butchers/:id/book" element={<ProtectedRoute><AppointmentBooking /></ProtectedRoute>} />
 
-                        {/* Partnerships route */}
-                        <Route path="/partnerships" element={<ProtectedRoute><Partnerships /></ProtectedRoute>} />
+            {/* Butcher routes */}
+            <Route path="/butcher/appointments" element={<RoleProtectedRoute requiredRole="BUTCHER"><ButcherAppointments /></RoleProtectedRoute>} />
 
-                        {/* Catch all */}
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                </FavoritesProvider>
-            </AuthProvider>
-        </BrowserRouter>
+            {/* Partnerships route */}
+            <Route path="/partnerships" element={<ProtectedRoute><Partnerships /></ProtectedRoute>} />
+
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     );
 };
 

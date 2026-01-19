@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
-
+import Navbar from '../../components/Navbar';
 import { fetchButcherProfile } from '../../api/butchers';
 import './ButcherDetail.css';
 
@@ -32,7 +32,7 @@ const ButcherDetail = () => {
     if (loading) {
         return (
             <div className="butcher-detail-page">
-                
+                <Navbar />
                 <div className="container">
                     <div className="loading-state">Yükleniyor...</div>
                 </div>
@@ -43,7 +43,7 @@ const ButcherDetail = () => {
     if (error || !butcher) {
         return (
             <div className="butcher-detail-page">
-                
+                <Navbar />
                 <div className="container">
                     <div className="error-state">
                         <p>{error || 'Kasap bulunamadı'}</p>
@@ -58,7 +58,7 @@ const ButcherDetail = () => {
 
     return (
         <div className="butcher-detail-page">
-            
+            <Navbar />
 
             <div className="container detail-content">
                 <div className="detail-header">

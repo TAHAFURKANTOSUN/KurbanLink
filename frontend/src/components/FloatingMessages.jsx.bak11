@@ -132,7 +132,7 @@ const FloatingMessages = () => {
                                     >
                                         <div className="conv-info">
                                             <div className="conv-name">{getCounterparty(conv)}</div>
-                                            <div className="conv-preview">{typeof conv.last_message === 'string' ? conv.last_message : conv.last_message?.content || 'Mesaj yok'}</div>
+                                            <div className="conv-preview">{conv.last_message || 'Mesaj yok'}</div>
                                         </div>
                                         {conv.unread_count > 0 && (
                                             <span className="conv-unread-badge">{conv.unread_count}</span>

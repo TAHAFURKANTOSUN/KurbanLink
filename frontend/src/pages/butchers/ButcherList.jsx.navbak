@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import Navbar from '../../components/Navbar';
 import ButcherCard from '../../components/butchers/ButcherCard';
 import { fetchButcherProfiles } from '../../api/butchers';
 import './ButcherList.css';
@@ -27,7 +27,7 @@ const ButcherList = () => {
 
     return (
         <div className="butcher-list-page">
-            
+            <Navbar />
 
             <div className="container">
                 <div className="page-header">

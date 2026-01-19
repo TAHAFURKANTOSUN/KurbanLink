@@ -6,7 +6,7 @@ import './ComingSoon.css';
 const ComingSoon = () => {
     return (
         <div className="coming-soon-page">
-            
+            <Navbar />
 
             <div className="container coming-soon-content">
                 <div className="coming-soon-card">

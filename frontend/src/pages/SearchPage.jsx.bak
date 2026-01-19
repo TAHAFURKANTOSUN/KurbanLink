@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-// Navbar removed - using global Header
+import Navbar from '../components/Navbar';
 import SearchFilters from '../components/search/SearchFilters';
 import ListingCard from '../components/ListingCard';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
@@ -106,7 +106,7 @@ const SearchPage = () => {
 
     return (
         <div className="search-page">
-            
+            <Navbar />
 
             <div className="container search-layout">
                 <aside className="search-sidebar">

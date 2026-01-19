@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import Navbar from '../../components/Navbar';
 import { fetchPartnerships, createPartnership, closePartnership } from '../../api/partnerships';
 import { fetchAnimals } from '../../api/animals';
 import { animalTypeLabel, partnershipStatusLabel } from '../../utils/labels';
@@ -165,7 +165,7 @@ const Partnerships = () => {
 
     return (
         <div className="partnerships-page">
-            
+            <Navbar />
 
             <div className="container partnerships-content">
                 <div className="page-header">

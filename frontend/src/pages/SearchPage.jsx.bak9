@@ -106,7 +106,7 @@ const SearchPage = () => {
 
     return (
         <div className="search-page">
-            
+            <Navbar />
 
             <div className="container search-layout">
                 <aside className="search-sidebar">

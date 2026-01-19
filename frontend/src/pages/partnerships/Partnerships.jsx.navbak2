@@ -165,7 +165,7 @@ const Partnerships = () => {
 
     return (
         <div className="partnerships-page">
-            
+            <Navbar />
 
             <div className="container partnerships-content">
                 <div className="page-header">

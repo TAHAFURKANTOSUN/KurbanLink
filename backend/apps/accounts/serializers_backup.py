@@ -48,10 +48,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MeSerializer(serializers.ModelSerializer):
     """
     Serializer for current user identity.
-    Returns id, email, username, phone, country, city, district, profile image, and active roles.
+    Returns id, email, username, phone, country, and active roles.
     """
     roles = serializers.SerializerMethodField()
-    profile_image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = User
@@ -70,6 +69,7 @@ class MeSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.profile_image.url)
             return obj.profile_image.url
         return None
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):

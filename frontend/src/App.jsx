@@ -15,16 +15,12 @@ const AppContent = () => {
 
   return (
     <>
-      {user && (
-        <>
-          <Header onMenuClick={() => setIsDrawerOpen(true)} />
-          <HamburgerDrawer
-            isOpen={isDrawerOpen}
-            onClose={() => setIsDrawerOpen(false)}
-          />
-          <FloatingMessages />
-        </>
-      )}
+      <Header onMenuClick={() => setIsDrawerOpen(true)} />
+      <HamburgerDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+      />
+      {user && <FloatingMessages />}
       <AppRouter />
     </>
   );

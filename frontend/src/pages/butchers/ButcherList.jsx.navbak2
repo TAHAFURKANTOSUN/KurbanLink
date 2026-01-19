@@ -27,7 +27,7 @@ const ButcherList = () => {
 
     return (
         <div className="butcher-list-page">
-            
+            <Navbar />
 
             <div className="container">
                 <div className="page-header">
