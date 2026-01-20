@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './HamburgerDrawer.css';
-import { User, Calendar, LogOut, ClipboardList, ButcherIcon, PartnershipIcon } from '../ui/icons';
+import { User, Calendar, LogOut, ClipboardList, ButcherIcon, PartnershipIcon, MessageCircle } from '../ui/icons';
 
 const HamburgerDrawer = ({ isOpen, onClose }) => {
     const { user, logout } = useAuth();
@@ -70,8 +70,17 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item"
                         onClick={handleLinkClick}
                     >
-                        <ClipboardList size={16} style={{ marginRight: '0.5rem' }} />
+                        <ClipboardList size={18} style={{ marginRight: '0.5rem' }} />
                         İlanlarım
+                    </Link>
+
+                    <Link
+                        to="/messages"
+                        className="drawer-nav-item"
+                        onClick={handleLinkClick}
+                    >
+                        <MessageCircle size={18} style={{ marginRight: '0.5rem' }} />
+                        Mesajlar
                     </Link>
 
                     {isButcher && (

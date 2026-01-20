@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
+import MessagesWidget from './components/messages/MessagesWidget';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { useAuth } from './auth/AuthContext';
 import AppRouter from './routes/AppRouter';
@@ -20,7 +21,7 @@ const AppContent = () => {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
       />
-      {user && <FloatingMessages />}
+      {user && <MessagesWidget />}
       <AppRouter />
     </>
   );

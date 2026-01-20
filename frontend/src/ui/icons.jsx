@@ -24,6 +24,7 @@ export {
   SlidersHorizontal,
   ClipboardList,
   Scissors,
+  Maximize2,
 
   // Content
   Heart,

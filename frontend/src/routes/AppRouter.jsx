@@ -31,7 +31,7 @@ import ButcherDetail from '../pages/butchers/ButcherDetail';
 import AppointmentBooking from '../pages/butchers/AppointmentBooking';
 
 // Messages
-import ConversationList from '../pages/messages/ConversationList';
+import MessagesPage from '../pages/messages/MessagesPage';
 import ConversationDetail from '../pages/messages/ConversationDetail';
 
 // Notifications
@@ -56,7 +56,7 @@ const AppRouter = () => {
             <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
 
             {/* Messages routes */}
-            <Route path="/messages" element={<ProtectedRoute><ConversationList /></ProtectedRoute>} />
+            <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
             <Route path="/messages/:conversationId" element={<ProtectedRoute><ConversationDetail /></ProtectedRoute>} />
 
             {/* Notifications */}
