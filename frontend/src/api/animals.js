@@ -40,3 +40,11 @@ export const deleteAnimalImage = async (imageId) => {
     const response = await apiClient.delete(`/api/animals/images/${imageId}/`);
     return response.data;
 };
+
+export const reorderAnimalImages = async (listingId, orders) => {
+    const response = await apiClient.post(
+        `/api/animals/${listingId}/images/reorder/`,
+        { orders }
+    );
+    return response.data;
+};

@@ -96,17 +96,21 @@ const ConversationDetail = () => {
                     {messages.length === 0 ? (
                         <p className="empty-message">Henüz mesaj yok. İlk mesajı gönderin!</p>
                     ) : (
-                        messages.map(message => (
-                            <div
-                                key={message.id}
-                                className={`message ${message.sender === user.id ? 'message-sent' : 'message-received'}`}
-                            >
-                                <div className="message-content">{message.content}</div>
-                                <div className="message-timestamp">
-                                    {new Date(message.created_at).toLocaleString('tr-TR')}
+                        messages.map(message => {
+                            // Ensure both are numbers for comparison
+                            const isMine = Number(message.sender) === Number(user.id);
+                            return (
+                                <div
+                                    key={message.id}
+                                    className={`message ${isMine ? 'message-sent' : 'message-received'}`}
+                                >
+                                    <div className="message-content">{message.content}</div>
+                                    <div className="message-timestamp">
+                                        {new Date(message.created_at).toLocaleString('tr-TR')}
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                     <div ref={messagesEndRef} />
                 </div>

@@ -20,8 +20,13 @@ image_detail = AnimalImageViewSet.as_view({
     'delete': 'destroy'
 })
 
+image_reorder = AnimalImageViewSet.as_view({
+    'post': 'reorder'
+})
+
 urlpatterns = [
     path('', include(router.urls)),
     path('<int:listing_pk>/images/', image_list, name='animal-images-list'),
+    path('<int:listing_pk>/images/reorder/', image_reorder, name='animal-images-reorder'),
     path('images/<int:pk>/', image_detail, name='animal-image-detail'),
 ]

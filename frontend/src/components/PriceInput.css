@@ -1,0 +1,36 @@
+.price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-currency {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d6a4f;
+}
+
+.price-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.price-input:focus {
+    outline: none;
+    border-color: #2d6a4f;
+    box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+}
+
+.price-input.error {
+    border-color: #ef4444;
+}
+
+.price-helper {
+    font-size: 0.875rem;
+    color: #64748b;
+}

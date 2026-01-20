@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { fetchListingDetails, updateListing, uploadListingImages } from '../../api/sellers';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchListingDetails, updateListing } from '../../api/sellers';
+import { uploadListingImages } from '../../api/sellers';
+import { fetchAnimalImages, deleteAnimalImage, reorderAnimalImages } from '../../api/animals';
+import ImageManager from '../../components/ImageManager';
+import PriceInput from '../../components/PriceInput';
 import './Seller.css';
 
 const EditListing = () => {
@@ -16,8 +20,7 @@ const EditListing = () => {
         location: '',
         description: ''
     });
-    const [selectedImages, setSelectedImages] = useState([]);
-    const [existingImages, setExistingImages] = useState([]);
+    const [images, setImages] = useState([]);  // Unified array: existing + new
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -27,11 +30,13 @@ const EditListing = () => {
     // Cleanup object URLs on unmount
     useEffect(() => {
         return () => {
-            selectedImages.forEach(img => {
-                if (img.preview) URL.revokeObjectURL(img.preview);
+            images.forEach(img => {
+                if (img.kind === 'local' && img.url) {
+                    URL.revokeObjectURL(img.url);
+                }
             });
         };
-    }, [selectedImages]);
+    }, [images]);
 
     useEffect(() => {
         const loadListing = async () => {
@@ -49,9 +54,14 @@ const EditListing = () => {
                 });
 
                 // Load existing images
-                const { fetchAnimalImages } = await import('../../api/animals');
-                const images = await fetchAnimalImages(id);
-                setExistingImages(images || []);
+                const serverImages = await fetchAnimalImages(id);
+                const transformedImages = (serverImages || []).map((img, idx) => ({
+                    kind: 'server',
+                    id: img.id,
+                    url: img.image_url,
+                    order: img.order !== undefined ? img.order : idx
+                }));
+                setImages(transformedImages);
             } catch (err) {
                 console.error('Failed to load listing:', err);
                 alert('İlan yüklenemedi');
@@ -73,117 +83,13 @@ const EditListing = () => {
         }
     };
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-
-        const newImages = files.map(file => ({
-            file,
-            preview: URL.createObjectURL(file)
-        }));
-
-        const updatedImages = [...selectedImages, ...newImages].slice(0, 20);
-
-        if (updatedImages.length > 20) {
-            alert('En fazla 20 resim yükleyebilirsiniz');
-            return;
-        }
-        setSelectedImages(updatedImages);
-        e.target.value = '';
-    };
-
-    const handleRemoveImage = (index) => {
-        const newImages = selectedImages.filter((_, i) => i !== index);
-        // Revoke the object URL to free memory
-        if (selectedImages[index]?.preview) {
-            URL.revokeObjectURL(selectedImages[index].preview);
-        }
-        setSelectedImages(newImages);
-    };
-
-    const handleDeleteExistingImage = async (imageId) => {
+    const handleDeleteServerImage = async (imageId) => {
         try {
-            const { deleteAnimalImage } = await import('../../api/animals');
             await deleteAnimalImage(imageId);
-            // Remove from state
-            setExistingImages(existingImages.filter(img => img.id !== imageId));
         } catch (err) {
             console.error('Failed to delete image:', err);
             alert('Resim silinemedi. Lütfen tekrar deneyin.');
         }
-    };
-
-    // Drag handlers for reordering newImages
-    const handleDragStart = (e, index) => {
-        setDraggedIndex(index);
-        e.dataTransfer.effectAllowed = "move";
-    };
-
-    const handleDragOver = (e, index) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-    };
-
-    const handleDrop = (e, targetIndex) => {
-        e.preventDefault();
-        if (draggedIndex === null || draggedIndex === targetIndex) return;
-
-        const newImages = [...selectedImages];
-        const draggedItem = newImages[draggedIndex];
-
-        newImages.splice(draggedIndex, 1);
-        newImages.splice(targetIndex, 0, draggedItem);
-
-        setSelectedImages(newImages);
-        setDraggedIndex(null);
-    };
-
-    const handleFileDrop = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDraggingOver(false);
-
-        // If dragging an existing image (reordering), don't process as file drop
-        if (draggedIndex !== null) {
-            return;
-        }
-
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-
-        if (files.length === 0) return;
-
-        const newImages = files.map(file => ({
-            file,
-            preview: URL.createObjectURL(file)
-        }));
-
-        const updatedImages = [...selectedImages, ...newImages].slice(0, 20);
-
-        if (selectedImages.length + files.length > 20) {
-            alert('En fazla 20 resim yükleyebilirsiniz');
-        }
-
-        setSelectedImages(updatedImages);
-    };
-
-    const handleDragEnter = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (draggedIndex === null) {
-            setIsDraggingOver(true);
-        }
-    };
-
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.currentTarget === e.target) {
-            setIsDraggingOver(false);
-        }
-    };
-
-    const handleDragOverDropZone = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
     };
 
     const validate = () => {
@@ -222,11 +128,24 @@ const EditListing = () => {
 
             await updateListing(id, listingData);
 
-            // Upload new images if any
-            if (selectedImages.length > 0) {
-                const filesToUpload = selectedImages.map(item => item.file);
+            // Upload new local images
+            const localImages = images.filter(img => img.kind === 'local');
+            if (localImages.length > 0) {
+                const filesToUpload = localImages.map(img => img.file);
                 await uploadListingImages(id, filesToUpload);
             }
+
+            // Refresh images to get IDs for newly uploaded ones
+            const updatedImages = await fetchAnimalImages(id);
+
+            // Create order mapping for all images
+            const orders = updatedImages.map((img, idx) => ({
+                id: img.id,
+                order: idx
+            }));
+
+            // Send reorder request
+            await reorderAnimalImages(id, orders);
 
             navigate('/seller/listings');
         } catch (err) {
@@ -322,6 +241,16 @@ const EditListing = () => {
                                 </div>
 
                                 <div className="form-group">
+                                    <label htmlFor="price">Fiyat</label>
+                                    <PriceInput
+                                        value={formData.price}
+                                        onChange={handleChange}
+                                        error={errors.price}
+                                    />
+                                    {errors.price && <span className="error-text">{errors.price}</span>}
+                                </div>
+
+                                <div className="form-group">
                                     <label htmlFor="weight">Ağırlık (kg)</label>
                                     <input
                                         type="number"
@@ -334,21 +263,6 @@ const EditListing = () => {
                                     />
                                     {errors.weight && <span className="error-text">{errors.weight}</span>}
                                 </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="price">Fiyat (TL) *</label>
-                                <input
-                                    type="number"
-                                    id="price"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    min="0"
-                                    step="0.01"
-                                    required
-                                />
-                                {errors.price && <span className="error-text">{errors.price}</span>}
                             </div>
 
                             <div className="form-group">
@@ -375,100 +289,15 @@ const EditListing = () => {
                                 />
                             </div>
 
-                            {/* Existing Images Section */}
-                            {existingImages.length > 0 && (
-                                <div className="form-group">
-                                    <label className="form-label">Mevcut Resimler</label>
-                                    <div className="image-uploader">
-                                        <div className="image-uploader__grid">
-                                            {existingImages.map((image, idx) => (
-                                                <div
-                                                    key={image.id}
-                                                    className={`image-uploader__item ${image.is_primary ? 'is-primary' : ''}`}
-                                                >
-                                                    <img
-                                                        src={image.image_url}
-                                                        alt={`Existing ${idx}`}
-                                                        className="image-uploader__thumb"
-                                                    />
-                                                    {image.is_primary && (
-                                                        <div className="image-uploader__badge">Ana Görsel</div>
-                                                    )}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteExistingImage(image.id)}
-                                                        className="image-uploader__remove"
-                                                        aria-label="Remove image"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
+                            {/* Unified Images Section */}
                             <div className="form-group">
-                                <label className="form-label">Yeni Resimler Ekle (En fazla 20)</label>
-
-
-                                <div
-                                    className={`image-uploader ${isDraggingOver ? 'drag-over' : ''}`}
-                                    onDrop={handleFileDrop}
-                                    onDragOver={handleDragOverDropZone}
-                                    onDragEnter={handleDragEnter}
-                                    onDragLeave={handleDragLeave}
-                                >
-                                    <div className="image-uploader__input">
-                                        <input
-                                            type="file"
-                                            id="images"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={handleImageChange}
-                                            className="file-input"
-                                        />
-                                        <span className="image-uploader__hint">
-                                            Ekle ya da sürükle
-                                        </span>
-                                    </div>
-
-                                    {selectedImages.length > 0 && (
-                                        <>
-                                            <div className="image-uploader__info">
-                                                <span>{selectedImages.length}/20 yeni resim seçildi</span>
-                                            </div>
-
-                                            <div className="image-uploader__grid">
-                                                {selectedImages.map((item, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className={`image-uploader__item ${draggedIndex === idx ? 'dragging' : ''}`}
-                                                        draggable
-                                                        onDragStart={(e) => handleDragStart(e, idx)}
-                                                        onDragOver={(e) => handleDragOver(e, idx)}
-                                                        onDrop={(e) => handleDrop(e, idx)}
-                                                    >
-                                                        <img
-                                                            src={item.preview}
-                                                            alt={`Preview ${idx}`}
-                                                            className="image-uploader__thumb"
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleRemoveImage(idx)}
-                                                            className="image-uploader__remove"
-                                                            aria-label="Remove image"
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
+                                <label className="form-label">Resimler (En fazla 20)</label>
+                                <ImageManager
+                                    images={images}
+                                    onChange={setImages}
+                                    onDeleteServer={handleDeleteServerImage}
+                                    maxImages={20}
+                                />
                             </div>
 
                             {errors.general && <div className="error-message">{errors.general}</div>}

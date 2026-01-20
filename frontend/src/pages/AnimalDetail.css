@@ -265,7 +265,6 @@
     font-size: 0.85rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
@@ -301,6 +300,7 @@
     line-height: 1.6;
     white-space: pre-wrap;
 }
+
 /* Action buttons container (favorite + messaging) */
 .action-buttons {
     display: flex;
@@ -341,4 +341,3 @@
     background-color: var(--bg-gray);
     border-radius: 4px;
 }
-

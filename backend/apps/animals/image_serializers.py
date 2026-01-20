@@ -17,7 +17,7 @@ class AnimalImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = AnimalImage
-        fields = ['id', 'listing', 'image', 'image_url', 'is_primary', 'created_at']
+        fields = ['id', 'listing', 'image', 'image_url', 'is_primary', 'order', 'created_at']
         read_only_fields = ['id', 'listing', 'created_at']
     
     def get_image_url(self, obj) -> str:

@@ -195,14 +195,18 @@ class AnimalImage(models.Model):
     )
     is_primary = models.BooleanField(
         default=False,
-        help_text="Whether this is the primary image for the listing"
+        help_text="Is this the primary image for the listing?"
+    )
+    order = models.IntegerField(
+        default=0,
+        help_text="Display order of the image (0 = first)"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         verbose_name = 'animal image'
         verbose_name_plural = 'animal images'
-        ordering = ['-is_primary', '-created_at']
+        ordering = ['order', 'created_at']
     
     def __str__(self) -> str:
         status = "Primary" if self.is_primary else "Secondary"

@@ -253,7 +253,7 @@ const AnimalDetail = () => {
                     <div className="info-grid">
                         <div className="info-item">
                             <span className="label">Fiyat</span>
-                            <span className="value price">${listing.price}</span>
+                            <span className="value price">₺{listing.price}</span>
                         </div>
                         <div className="info-item">
                             <span className="label">Konum</span>

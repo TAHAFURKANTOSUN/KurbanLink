@@ -75,6 +75,53 @@ class AnimalImageViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
     
+    @action(methods=['post'], detail=False, url_path='reorder')
+    def reorder(self, request, *args, **kwargs):
+        """
+        Bulk update image order.
+        
+        Expected payload:
+            {
+                "orders": [
+                    {"id": 10, "order": 0},
+                    {"id": 11, "order": 1},
+                    ...
+                ]
+            }
+        
+        Returns:
+            200 OK with updated images list
+            403 Forbidden if not the seller
+        """
+        listing_id = self.kwargs.get('listing_pk')
+        listing = get_object_or_404(AnimalListing, pk=listing_id)
+        
+        # Check ownership
+        if listing.seller != request.user:
+            return Response(
+                {'detail': 'You do not have permission to reorder these images.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        orders = request.data.get('orders', [])
+        
+        # Update each image's order
+        for item in orders:
+            image_id = item.get('id')
+            new_order = item.get('order')
+            
+            try:
+                image = AnimalImage.objects.get(id=image_id, listing=listing)
+                image.order = new_order
+                image.save()
+            except AnimalImage.DoesNotExist:
+                continue
+        
+        # Return updated images
+        images = AnimalImage.objects.filter(listing=listing)
+        serializer = self.get_serializer(images, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def destroy(self, request, *args, **kwargs):
         """
         Delete image.
