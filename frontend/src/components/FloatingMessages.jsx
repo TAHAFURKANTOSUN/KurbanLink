@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchConversations, fetchConversationMessages, sendMessage as sendMessageAPI, markAllRead } from '../api/messages';
 import { useAuth } from '../auth/AuthContext';
 import './FloatingMessages.css';
+import { MessageCircle } from '../ui/icons';
 
 const FloatingMessages = () => {
     const navigate = useNavigate();
@@ -117,7 +118,8 @@ const FloatingMessages = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 title="Mesajlar"
             >
-                💬 Mesajlar
+                <MessageCircle size={20} style={{ marginRight: '0.5rem' }} />
+                Mesajlar
                 {totalUnread > 0 && (
                     <span className="unread-badge">{totalUnread}</span>
                 )}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { fetchButcherAppointments, approveAppointment, rejectAppointment } from '../../api/butchers';
 import './ButcherAppointments.css';
+import { Calendar, Clock } from '../../ui/icons';
 
 const ButcherAppointments = () => {
     const navigate = useNavigate();
@@ -90,8 +91,14 @@ const ButcherAppointments = () => {
         <div key={apt.id} className="appointment-card">
             <div className="card-header">
                 <div className="date-time">
-                    <span className="date">📅 {formatDate(apt.date)}</span>
-                    <span className="time">🕐 {formatTime(apt.time)}</span>
+                    <span className="date">
+                        <Calendar size={14} style={{ marginRight: '0.25rem' }} />
+                        {formatDate(apt.date)}
+                    </span>
+                    <span className="time">
+                        <Clock size={14} style={{ marginRight: '0.25rem' }} />
+                        {formatTime(apt.time)}
+                    </span>
                 </div>
                 <span className={`status-badge status-${apt.status.toLowerCase()}`}>
                     {apt.status === 'PENDING' ? 'Beklemede' :
@@ -138,7 +145,7 @@ const ButcherAppointments = () => {
     if (loading) {
         return (
             <div className="butcher-appointments-page">
-                
+
                 <div className="container">
                     <div className="loading-state">Randevular yükleniyor...</div>
                 </div>
@@ -149,7 +156,7 @@ const ButcherAppointments = () => {
     if (error) {
         return (
             <div className="butcher-appointments-page">
-                
+
                 <div className="container">
                     <div className="error-state">
                         <p>{error}</p>
@@ -164,7 +171,7 @@ const ButcherAppointments = () => {
 
     return (
         <div className="butcher-appointments-page">
-            
+
 
             <div className="container appointments-content">
                 <div className="page-header">

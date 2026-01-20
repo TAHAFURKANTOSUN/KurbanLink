@@ -5,6 +5,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
 import NotificationDropdown from '../components/NotificationDropdown';
 import './AnimalsList.css';
+import { MessageCircle, Bell, User, Calendar } from '../ui/icons';
 
 const AnimalsList = () => {
     const navigate = useNavigate();
@@ -128,20 +129,23 @@ const AnimalsList = () => {
                 <h1>Hayvan İlanları</h1>
                 <div className="header-actions">
                     <button onClick={() => navigate('/butchers')} className="favorites-link-btn">
-                        🏪 Kasaplar
+                        Kasaplar
                     </button>
                     <button onClick={() => navigate('/messages')} className="favorites-link-btn">
-                        💬 Mesajlar
+                        <MessageCircle size={16} style={{ marginRight: '0.5rem' }} />
+                        Mesajlar
                     </button>
                     <button onClick={() => navigate('/notifications')} className="favorites-link-btn">
-                        🔔 Bildirimler
+                        <Bell size={16} style={{ marginRight: '0.5rem' }} />
+                        Bildirimler
                     </button>
                     <NotificationDropdown />
                     <button onClick={() => navigate('/favorites')} className="favorites-link-btn">
                         ⭐ Favorilerim
                     </button>
                     <button onClick={() => navigate('/profile')} className="favorites-link-btn">
-                        👤 Profilim
+                        <User size={16} style={{ marginRight: '0.5rem' }} />
+                        Profilim
                     </button>
                     {user && ( // Show to all authenticated users
                         <Link to="/seller/listings/new" className="favorites-link-btn">
@@ -151,10 +155,12 @@ const AnimalsList = () => {
                     {user?.roles && user.roles.includes('BUTCHER') && (
                         <>
                             <button onClick={() => navigate('/butcher/appointments')} className="favorites-link-btn">
-                                📅 Randevularım
+                                <Calendar size={16} style={{ marginRight: '0.5rem' }} />
+                                Randevularım
                             </button>
                             <button onClick={() => navigate('/butcher/profile')} className="favorites-link-btn">
-                                👤 Kasap Profilim
+                                <User size={16} style={{ marginRight: '0.5rem' }} />
+                                Kasap Profilim
                             </button>
                         </>
                     )}

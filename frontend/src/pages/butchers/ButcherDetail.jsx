@@ -4,6 +4,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 import { fetchButcherProfile } from '../../api/butchers';
 import './ButcherDetail.css';
+import { MapPin } from '../../ui/icons';
 
 const ButcherDetail = () => {
     const { id } = useParams();
@@ -32,7 +33,7 @@ const ButcherDetail = () => {
     if (loading) {
         return (
             <div className="butcher-detail-page">
-                
+
                 <div className="container">
                     <div className="loading-state">Yükleniyor...</div>
                 </div>
@@ -43,7 +44,7 @@ const ButcherDetail = () => {
     if (error || !butcher) {
         return (
             <div className="butcher-detail-page">
-                
+
                 <div className="container">
                     <div className="error-state">
                         <p>{error || 'Kasap bulunamadı'}</p>
@@ -58,13 +59,16 @@ const ButcherDetail = () => {
 
     return (
         <div className="butcher-detail-page">
-            
+
 
             <div className="container detail-content">
                 <div className="detail-header">
                     <div>
                         <h1>{butcher.butcher_name}</h1>
-                        <p className="location">📍 {butcher.city}</p>
+                        <p className="location">
+                            <MapPin size={14} style={{ marginRight: '0.25rem' }} />
+                            {butcher.city}
+                        </p>
                     </div>
                     <button onClick={() => navigate('/butchers')} className="btn-secondary">
                         ← Geri

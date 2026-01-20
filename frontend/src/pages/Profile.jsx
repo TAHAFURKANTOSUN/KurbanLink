@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './Profile.css';
+import { MapPin, Edit3, Heart, MessageCircle, Calendar, Mail, Phone, ClipboardList } from '../ui/icons';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -49,14 +50,17 @@ const Profile = () => {
                     <div className="profile-info-section">
                         <h2 className="profile-name">{user?.username}</h2>
                         <div className="profile-location">
-                            📍 {getLocation()}
+                            <MapPin size={14} style={{ marginRight: '0.25rem' }} />
+                            {getLocation()}
                         </div>
                         <div className="profile-contact">
                             <div className="contact-item">
-                                📧 {user?.email}
+                                <Mail size={14} style={{ marginRight: '0.25rem' }} />
+                                {user?.email}
                             </div>
                             <div className="contact-item">
-                                📱 {formatPhone(user?.phone_number, user?.country_code)}
+                                <Phone size={14} style={{ marginRight: '0.25rem' }} />
+                                {formatPhone(user?.phone_number, user?.country_code)}
                             </div>
                         </div>
                     </div>
@@ -66,7 +70,8 @@ const Profile = () => {
                             onClick={() => navigate('/profile/edit')}
                             className="edit-profile-btn"
                         >
-                            ✏️ Profili Düzenle
+                            <Edit3 size={16} style={{ marginRight: '0.5rem' }} />
+                            Profili Düzenle
                         </button>
                     </div>
                 </div>
@@ -76,7 +81,7 @@ const Profile = () => {
                     <h3 className="section-title">Hızlı İşlemler</h3>
                     <div className="links-grid">
                         <button onClick={() => navigate('/favorites')} className="action-card">
-                            <span className="action-icon">❤️</span>
+                            <span className="action-icon"><Heart size={20} /></span>
                             <div className="action-text">
                                 <h3>Favorilerim</h3>
                                 <p>Kaydettiğiniz ilanlar</p>
@@ -84,7 +89,7 @@ const Profile = () => {
                         </button>
 
                         <button onClick={() => navigate('/messages')} className="action-card">
-                            <span className="action-icon">💬</span>
+                            <span className="action-icon"><MessageCircle size={20} /></span>
                             <div className="action-text">
                                 <h3>Mesajlarım</h3>
                                 <p>Sohbet geçmişiniz</p>
@@ -93,7 +98,7 @@ const Profile = () => {
 
                         {/* Seller Actions */}
                         <button onClick={() => navigate('/seller/listings')} className="action-card">
-                            <span className="action-icon">📋</span>
+                            <span className="action-icon"><ClipboardList size={20} /></span>
                             <div className="action-text">
                                 <h3>İlanlarım</h3>
                                 <p>Yayındaki ilanlarınız</p>
@@ -111,7 +116,7 @@ const Profile = () => {
                         {/* Butcher Actions */}
                         {user?.roles?.includes('BUTCHER') && (
                             <button onClick={() => navigate('/butcher/appointments')} className="action-card">
-                                <span className="action-icon">📅</span>
+                                <span className="action-icon"><Calendar size={20} /></span>
                                 <div className="action-text">
                                     <h3>Randevularım</h3>
                                     <p>Kesim randevularınız</p>

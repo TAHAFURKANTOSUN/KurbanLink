@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchNotifications, markNotificationRead, markAllRead } from '../api/notifications';
 import { useAuth } from '../auth/AuthContext';
 import './NotificationDropdown.css';
+import { Bell, MessageCircle, Heart, Calendar, CheckCircle2, X } from '../ui/icons';
 
 const NotificationDropdown = () => {
     const navigate = useNavigate();
@@ -101,13 +102,13 @@ const NotificationDropdown = () => {
 
     const getIcon = (type) => {
         switch (type) {
-            case 'NEW_MESSAGE': return '💬';
-            case 'FAVORITED_LISTING': return '❤️';
-            case 'APPOINTMENT_REQUESTED': return '📅';
-            case 'APPOINTMENT_APPROVED': return '✅';
-            case 'APPOINTMENT_REJECTED': return '❌';
-            case 'APPOINTMENT_CANCELLED': return '🚫';
-            default: return '📢';
+            case 'NEW_MESSAGE': return <MessageCircle size={16} />;
+            case 'FAVORITED_LISTING': return <Heart size={16} />;
+            case 'APPOINTMENT_REQUESTED': return <Calendar size={16} />;
+            case 'APPOINTMENT_APPROVED': return <CheckCircle2 size={16} />;
+            case 'APPOINTMENT_REJECTED': return <X size={16} />;
+            case 'APPOINTMENT_CANCELLED': return <X size={16} />;
+            default: return <Bell size={16} />;
         }
     };
 
@@ -129,7 +130,7 @@ const NotificationDropdown = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 title="Bildirimler"
             >
-                🔔
+                <Bell size={20} />
                 {unreadCount > 0 && (
                     <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
                 )}

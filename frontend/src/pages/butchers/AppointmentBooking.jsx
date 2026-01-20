@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
-
+import './AppointmentBooking.css';
+import { AlertTriangle } from '../../ui/icons';
 import { fetchButcherProfile, createAppointment } from '../../api/butchers';
 import { fetchMyListings } from '../../api/sellers';
 import './AppointmentBooking.css';
@@ -99,7 +100,7 @@ const AppointmentBooking = () => {
     if (loading) {
         return (
             <div className="booking-page">
-                
+
                 <div className="container">
                     <div className="loading-state">Yükleniyor...</div>
                 </div>
@@ -110,7 +111,7 @@ const AppointmentBooking = () => {
     if (!butcher) {
         return (
             <div className="booking-page">
-                
+
                 <div className="container">
                     <div className="error-state">
                         <p>Kasap bulunamadı</p>
@@ -126,7 +127,7 @@ const AppointmentBooking = () => {
     if (success) {
         return (
             <div className="booking-page">
-                
+
                 <div className="container">
                     <div className="success-card">
                         <svg className="success-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,7 +151,7 @@ const AppointmentBooking = () => {
 
     return (
         <div className="booking-page">
-            
+
 
             <div className="container booking-content">
                 <div className="booking-header">
@@ -163,7 +164,8 @@ const AppointmentBooking = () => {
                 <form onSubmit={handleSubmit} className="booking-form">
                     {error && (
                         <div className="error-banner">
-                            ⚠️ {error}
+                            <AlertTriangle size={16} style={{ marginRight: '0.5rem' }} />
+                            {error}
                         </div>
                     )}
 

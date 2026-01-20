@@ -3,6 +3,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { cities } from '../../data/locations';
 import './HomeSidebar.css';
+import { Search, PartnershipIcon } from '../../ui/icons';
 
 const HomeSidebar = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -173,7 +174,8 @@ const HomeSidebar = () => {
                 <ul className="sidebar-list">
                     <li>
                         <Link to="/search" className="sidebar-link">
-                            🔍 Detaylı Arama
+                            <Search size={16} style={{ marginRight: '0.5rem' }} />
+                            Detaylı Arama
                         </Link>
                     </li>
                     <li>
@@ -182,7 +184,8 @@ const HomeSidebar = () => {
                             className="sidebar-link partnership-link"
                             onClick={(e) => handleProtectedLink(e, '/partnerships')}
                         >
-                            {user ? '🤝 Kurban Ortaklığı' : '🔒 Kurban Ortaklığı'}
+                            <PartnershipIcon size={16} style={{ marginRight: '0.5rem' }} />
+                            Kurban Ortaklığı
                         </a>
                     </li>
                 </ul>

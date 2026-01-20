@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './HamburgerDrawer.css';
+import { User, Calendar, LogOut, ClipboardList, ButcherIcon, PartnershipIcon } from '../ui/icons';
 
 const HamburgerDrawer = ({ isOpen, onClose }) => {
     const { user, logout } = useAuth();
@@ -42,7 +43,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item"
                         onClick={handleLinkClick}
                     >
-                        🤝 Kurban Ortaklığı
+                        <PartnershipIcon size={18} style={{ marginRight: '0.5rem' }} />
+                        Kurban Ortaklığı
                     </Link>
 
                     <Link
@@ -50,7 +52,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item"
                         onClick={handleLinkClick}
                     >
-                        🔪 Kasap Bul
+                        <ButcherIcon size={18} style={{ marginRight: '0.5rem' }} />
+                        Kasap Bul
                     </Link>
 
                     <Link
@@ -58,7 +61,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item"
                         onClick={handleLinkClick}
                     >
-                        👤 Profilim
+                        <User size={16} style={{ marginRight: '0.5rem' }} />
+                        Profilim
                     </Link>
 
                     <Link
@@ -66,7 +70,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item"
                         onClick={handleLinkClick}
                     >
-                        📋 İlanlarım
+                        <ClipboardList size={16} style={{ marginRight: '0.5rem' }} />
+                        İlanlarım
                     </Link>
 
                     {isButcher && (
@@ -75,7 +80,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                             className="drawer-nav-item"
                             onClick={handleLinkClick}
                         >
-                            📅 Randevularım
+                            <Calendar size={16} style={{ marginRight: '0.5rem' }} />
+                            Randevularım
                         </Link>
                     )}
 
@@ -85,7 +91,8 @@ const HamburgerDrawer = ({ isOpen, onClose }) => {
                         className="drawer-nav-item drawer-logout-btn"
                         onClick={handleLogout}
                     >
-                        🚪 Çıkış Yap
+                        <LogOut size={16} style={{ marginRight: '0.5rem' }} />
+                        Çıkış Yap
                     </button>
                 </nav>
             </div>

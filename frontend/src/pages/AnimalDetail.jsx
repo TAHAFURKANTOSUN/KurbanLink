@@ -5,6 +5,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import { fetchAnimal, fetchAnimalImages } from '../api/animals';
 import { createConversation } from '../api/messages';
 import './AnimalDetail.css';
+import { Edit3, Eye, MessageCircle, Heart } from '../ui/icons';
 
 const AnimalDetail = () => {
     const { id } = useParams();
@@ -213,10 +214,12 @@ const AnimalDetail = () => {
                                         onClick={() => navigate(`/seller/listings/${id}/edit`)}
                                         title="İlanı düzenle"
                                     >
-                                        ✏️ Düzenle
+                                        <Edit3 size={16} style={{ marginRight: '0.5rem' }} />
+                                        Düzenle
                                     </button>
                                     <div className="view-count">
-                                        👁️ {listing.view_count || 0} görüntülenme
+                                        <Eye size={16} style={{ marginRight: '0.5rem' }} />
+                                        {listing.view_count || 0} görüntülenme
                                     </div>
                                 </>
                             ) : (
@@ -236,7 +239,12 @@ const AnimalDetail = () => {
                                         disabled={messagingLoading}
                                         title="Satıcı ile mesajlaş"
                                     >
-                                        {messagingLoading ? 'Yükleniyor...' : '💬 Mesajlaş'}
+                                        {messagingLoading ? 'Yükleniyor...' : (
+                                            <>
+                                                <MessageCircle size={16} style={{ marginRight: '0.5rem' }} />
+                                                Mesajlaş
+                                            </>
+                                        )}
                                     </button>
                                 </>
                             )}

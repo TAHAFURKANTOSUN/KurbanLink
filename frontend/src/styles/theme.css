@@ -314,3 +314,79 @@ a:hover {
     text-align: center;
     color: var(--danger);
 }
+
+/* ===================================
+   ICON UTILITIES
+   =================================== */
+
+/* Base icon styling */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  color: currentColor;
+}
+
+.icon-muted {
+  color: var(--muted);
+}
+
+.icon-primary {
+  color: var(--primary);
+}
+
+.icon-danger {
+  color: var(--danger);
+}
+
+/* Icon button base */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background-color: var(--bg-gray);
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Icon button variants */
+.icon-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.icon-btn--ghost:hover:not(:disabled) {
+  border-color: var(--primary);
+  background-color: rgba(45, 106, 79, 0.05);
+}
+
+.icon-btn--danger {
+  color: var(--danger);
+}
+
+.icon-btn--danger:hover:not(:disabled) {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.icon-btn--primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.icon-btn--primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}

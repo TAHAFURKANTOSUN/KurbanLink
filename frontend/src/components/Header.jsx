@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import NotificationDropdown from './NotificationDropdown';
 import './Header.css';
+import { Search, User, LogOut, Menu } from '../ui/icons';
 
 const Header = ({ onMenuClick }) => {
     const { user, logout } = useAuth();
@@ -60,8 +61,8 @@ const Header = ({ onMenuClick }) => {
                             className="search-input"
                             autoComplete="off"
                         />
-                        <button type="submit" className="search-btn">
-                            🔍
+                        <button type="submit" className="search-btn" aria-label="Ara">
+                            <Search size={18} />
                         </button>
                     </form>
                 </div>
@@ -100,13 +101,15 @@ const Header = ({ onMenuClick }) => {
                                         className="user-dropdown-item"
                                         onClick={() => setIsProfileOpen(false)}
                                     >
-                                        👤 Profilim
+                                        <User size={16} style={{ marginRight: '0.5rem' }} />
+                                        Profilim
                                     </Link>
                                     <button
                                         className="user-dropdown-item logout"
                                         onClick={handleLogout}
                                     >
-                                        🚪 Çıkış Yap
+                                        <LogOut size={16} style={{ marginRight: '0.5rem' }} />
+                                        Çıkış Yap
                                     </button>
                                 </div>
                             )}
@@ -119,7 +122,7 @@ const Header = ({ onMenuClick }) => {
                             title="Menü"
                             onClick={onMenuClick}
                         >
-                            ☰
+                            <Menu size={24} />
                         </button>
                     </div>
                 ) : (

@@ -107,13 +107,15 @@ const SellerListings = () => {
                         className={`sidebar-item ${viewMode === 'active' ? 'active' : ''}`}
                         onClick={() => setViewMode('active')}
                     >
-                        📋 Aktif İlanlar
+                        <ClipboardList size={16} style={{ marginRight: '0.5rem' }} />
+                        Aktif İlanlar
                     </button>
                     <button
                         className={`sidebar-item ${viewMode === 'deleted' ? 'active' : ''}`}
                         onClick={() => setViewMode('deleted')}
                     >
-                        🗑️ Silinen İlanlar
+                        <Trash2 size={16} style={{ marginRight: '0.5rem' }} />
+                        Silinen İlanlar
                     </button>
                 </div>
 

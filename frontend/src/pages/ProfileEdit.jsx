@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { cities, getDistrictsForCity } from '../data/locations';
 import axios from 'axios';
 import './ProfileEdit.css';
+import { User } from '../ui/icons';
 
 const ProfileEdit = () => {
     const navigate = useNavigate();
@@ -138,7 +139,7 @@ const ProfileEdit = () => {
                                     <img src={previewImage} alt="Profil" />
                                 ) : (
                                     <div className="image-placeholder">
-                                        {formData.username?.charAt(0)?.toUpperCase() || '👤'}
+                                        {formData.username?.charAt(0)?.toUpperCase() || <User size={20} />}
                                     </div>
                                 )}
                             </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { fetchNotifications, markNotificationRead } from '../api/notifications';
 import './Notifications.css';
+import { MessageCircle, Heart, Calendar, Bell } from '../ui/icons';
 
 const Notifications = () => {
     const navigate = useNavigate();
@@ -93,19 +94,19 @@ const Notifications = () => {
     const getNotificationIcon = (type) => {
         switch (type) {
             case 'NEW_MESSAGE':
-                return '💬';
+                return <MessageCircle size={20} />;
             case 'FAVORITED_LISTING':
-                return '❤️';
+                return <Heart size={20} />;
             case 'LISTING_UPDATED':
             case 'PRICE_CHANGED':
-                return '📝';
+                return <Bell size={20} />;
             case 'APPOINTMENT_CREATED':
             case 'APPOINTMENT_APPROVED':
             case 'APPOINTMENT_REJECTED':
             case 'APPOINTMENT_CANCELLED':
-                return '📅';
+                return <Calendar size={20} />;
             default:
-                return '🔔';
+                return <Bell size={20} />;
         }
     };
 

@@ -9,6 +9,7 @@ import LoadingState from '../../components/state/LoadingState';
 import EmptyState from '../../components/state/EmptyState';
 import ErrorState from '../../components/state/ErrorState';
 import './Partnerships.css';
+import { CheckCircle2, AlertTriangle, MapPin } from '../../ui/icons';
 
 const Partnerships = () => {
     const navigate = useNavigate();
@@ -165,7 +166,7 @@ const Partnerships = () => {
 
     return (
         <div className="partnerships-page">
-            
+
 
             <div className="container partnerships-content">
                 <div className="page-header">
@@ -180,13 +181,15 @@ const Partnerships = () => {
 
                         {formSuccess && (
                             <div className="success-banner">
-                                ✅ Ortaklık ilanınız oluşturuldu!
+                                <CheckCircle2 size={16} style={{ marginRight: '0.5rem' }} />
+                                Ortaklık ilanınız oluşturuldu!
                             </div>
                         )}
 
                         {formError && (
                             <div className="error-banner">
-                                ⚠️ {formError}
+                                <AlertTriangle size={16} style={{ marginRight: '0.5rem' }} />
+                                {formError}
                             </div>
                         )}
 
@@ -277,7 +280,10 @@ const Partnerships = () => {
                                 {partnerships.map(partnership => (
                                     <div key={partnership.id} className="partnership-card">
                                         <div className="card-header">
-                                            <h3>📍 {partnership.city}</h3>
+                                            <h3>
+                                                <MapPin size={18} style={{ marginRight: '0.5rem' }} />
+                                                {partnership.city}
+                                            </h3>
                                             <span className={`status-badge status-${partnership.status.toLowerCase()}`}>
                                                 {partnershipStatusLabel(partnership.status)}
                                             </span>
