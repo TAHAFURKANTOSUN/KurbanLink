@@ -1,59 +1,157 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { Menu, X } from '../ui/icons';
 import './Navbar.css';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
+        setIsDrawerOpen(false);
         navigate('/login');
     };
 
+    const closeDrawer = () => {
+        setIsDrawerOpen(false);
+    };
+
     return (
-        <nav className="navbar">
-            <div className="navbar-container">
-                {/* Left: Brand - ALWAYS left-aligned */}
-                <div className="navbar-brand">
-                    <Link to="/" className="brand-link">
-                        Kurban<span className="brand-accent">Link</span>
-                    </Link>
-                </div>
-
-                {/* Center: Navigation Links */}
-                <div className="navbar-nav">
-                    <Link to="/" className="nav-link">Ana Sayfa</Link>
-                    <Link to="/partnerships" className="nav-link">Kurban Ortaklığı</Link>
-                    <Link to="/butchers" className="nav-link">Kasap Bul</Link>
-                    {user && (
-                        <Link to="/messages" className="nav-link">Mesajlar</Link>
-                    )}
-                    {user?.roles?.includes('BUTCHER') && (
-                        <Link to="/butcher/appointments" className="nav-link">Randevularım</Link>
-                    )}
-                </div>
-
-                {/* Right: Auth Actions */}
-                <div className="navbar-actions">
-                    {user ? (
-                        <>
-                            <Link to="/profile" className="nav-link">
-                                Profilim
-                            </Link>
-                            <button onClick={handleLogout} className="btn-logout">
-                                Çıkış
-                            </button>
-                        </>
-                    ) : (
-                        <Link to="/login" className="btn-login">
-                            Giriş Yap
+        <>
+            <nav className="navbar">
+                <div className="navbar-container">
+                    {/* Left: Brand */}
+                    <div className="navbar-brand">
+                        <Link to="/" className="brand-link" onClick={closeDrawer}>
+                            Kurban<span className="brand-accent">Link</span>
                         </Link>
+                    </div>
+
+                    {/* Center: Desktop Navigation Links */}
+                    <div className="navbar-nav">
+                        <Link to="/" className="nav-link">Ana Sayfa</Link>
+                        <Link to="/partnerships" className="nav-link">Kurban Ortaklığı</Link>
+                        <Link to="/butchers" className="nav-link">Kasap Bul</Link>
+                        {user && (
+                            <Link to="/messages" className="nav-link">Mesajlar</Link>
+                        )}
+                        {user?.roles?.includes('BUTCHER') && (
+                            <Link to="/butcher/appointments" className="nav-link">Randevularım</Link>
+                        )}
+                    </div>
+
+                    {/* Right: Auth Actions (Desktop) */}
+                    <div className="navbar-actions">
+                        {user ? (
+                            <>
+                                <Link to="/profile" className="nav-link">
+                                    Profilim
+                                </Link>
+                                <button onClick={handleLogout} className="btn-logout">
+                                    Çıkış
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" className="btn-login">
+                                    Giriş Yap
+                                </Link>
+                                <Link to="/register" className="btn-register">
+                                    Kayıt Ol
+                                </Link>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Mobile: Hamburger Icon */}
+                    <button
+                        className="navbar-hamburger"
+                        onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                        aria-label="Menü"
+                    >
+                        {isDrawerOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile Drawer Overlay */}
+            {isDrawerOpen && (
+                <div className="drawer-overlay" onClick={closeDrawer} />
+            )}
+
+            {/* Mobile Drawer */}
+            <div className={`mobile-drawer ${isDrawerOpen ? 'open' : ''}`}>
+                <div className="drawer-content">
+                    {/* User Info (if logged in) */}
+                    {user && (
+                        <div className="drawer-user-section">
+                            <div className="drawer-user-info">
+                                <div className="drawer-user-avatar">
+                                    {user.username?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
+                                </div>
+                                <div className="drawer-user-details">
+                                    <div className="drawer-user-name">
+                                        {user.username || user.email?.split('@')[0]}
+                                    </div>
+                                    <div className="drawer-user-email">{user.email}</div>
+                                </div>
+                            </div>
+                        </div>
                     )}
+
+                    {/* Navigation Links */}
+                    <div className="drawer-nav">
+                        <Link to="/" className="drawer-link" onClick={closeDrawer}>
+                            Ana Sayfa
+                        </Link>
+                        <Link to="/partnerships" className="drawer-link" onClick={closeDrawer}>
+                            Kurban Ortaklığı
+                        </Link>
+                        <Link to="/butchers" className="drawer-link" onClick={closeDrawer}>
+                            Kasap Bul
+                        </Link>
+
+                        {user && (
+                            <>
+                                <div className="drawer-divider" />
+                                <Link to="/messages" className="drawer-link" onClick={closeDrawer}>
+                                    Mesajlar
+                                </Link>
+                                <Link to="/profile" className="drawer-link" onClick={closeDrawer}>
+                                    Profilim
+                                </Link>
+                                {user?.roles?.includes('BUTCHER') && (
+                                    <Link to="/butcher/appointments" className="drawer-link" onClick={closeDrawer}>
+                                        Randevularım
+                                    </Link>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {/* Auth Actions */}
+                    <div className="drawer-actions">
+                        {user ? (
+                            <button onClick={handleLogout} className="drawer-btn drawer-btn-logout">
+                                Çıkış Yap
+                            </button>
+                        ) : (
+                            <>
+                                <Link to="/login" className="drawer-btn drawer-btn-login" onClick={closeDrawer}>
+                                    Giriş Yap
+                                </Link>
+                                <Link to="/register" className="drawer-btn drawer-btn-register" onClick={closeDrawer}>
+                                    Kayıt Ol
+                                </Link>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
-        </nav>
+        </>
     );
 };
 

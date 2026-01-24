@@ -118,6 +118,7 @@ export const AuthProvider = ({ children }) => {
             value={{
                 user,
                 isAuthenticated: !!user,
+                isAnonymous: !user && !isInitializing,
                 loading,
                 error,
                 isInitializing,

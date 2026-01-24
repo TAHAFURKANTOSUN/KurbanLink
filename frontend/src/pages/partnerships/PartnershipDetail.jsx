@@ -72,7 +72,17 @@ const PartnershipDetail = () => {
         }
     };
 
+    const handleAuthAction = () => {
+        if (!user) {
+            alert('Bu işlem için giriş yapmalısınız.');
+            navigate(`/login?next=${encodeURIComponent(window.location.pathname)}`);
+            return false;
+        }
+        return true;
+    };
+
     const handleRequestJoin = async () => {
+        if (!handleAuthAction()) return;
         setActionLoading(true);
         try {
             await requestJoin(id);
@@ -114,6 +124,7 @@ const PartnershipDetail = () => {
     };
 
     const handleLeave = async () => {
+        if (!handleAuthAction()) return;
         if (!window.confirm('Ortaklıktan ayrılmak istediğinizden emin misiniz?')) return;
 
         setActionLoading(true);
@@ -131,6 +142,7 @@ const PartnershipDetail = () => {
     };
 
     const handleClose = async () => {
+        if (!handleAuthAction()) return;
         if (!window.confirm('Ortaklığı kapatmak istediğinizden emin misiniz?')) return;
 
         setActionLoading(true);
@@ -146,6 +158,7 @@ const PartnershipDetail = () => {
     };
 
     const handleOpenGroupChat = () => {
+        if (!handleAuthAction()) return;
         // Navigate to messages with group conversation
         navigate(`/messages?group=${partnership.id}`);
     };

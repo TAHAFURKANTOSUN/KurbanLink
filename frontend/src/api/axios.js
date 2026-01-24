@@ -55,9 +55,19 @@ apiClient.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${access}`;
                 return apiClient(originalRequest);
             } catch (refreshError) {
-                // Refresh failed, clear tokens and reject
+                // Refresh failed, clear tokens
                 clearTokens();
-                window.location.href = '/login';
+
+                // Only redirect to login if this was NOT a public GET request
+                const isPublicRead = originalRequest.method?.toLowerCase() === 'get';
+
+                if (!isPublicRead) {
+                    // Protected action (POST/PUT/DELETE) - redirect to login
+                    window.location.href = '/login';
+                }
+                // For public GET requests, just reject without redirect
+                // This allows anonymous browsing to continue
+
                 return Promise.reject(refreshError);
             }
         }

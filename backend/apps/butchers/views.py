@@ -67,8 +67,13 @@ class ButcherProfileViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         """
         Set permissions based on action.
+        Public read access for list/retrieve.
         """
-        if self.action == 'create':
+        from rest_framework.permissions import AllowAny
+        
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
+        elif self.action == 'create':
             permission_classes = [IsAuthenticated, IsButcher]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

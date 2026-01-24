@@ -15,7 +15,16 @@ class PartnershipListingViewSet(viewsets.ModelViewSet):
     ViewSet for partnership listings with membership management.
     """
     serializer_class = PartnershipSerializer
-    permission_classes = [IsAuthenticated]
+    
+    def get_permissions(self):
+        """
+        Public read access for list/retrieve, authenticated for actions.
+        """
+        from rest_framework.permissions import AllowAny
+        
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
+        return [IsAuthenticated()]
     
     def get_queryset(self):
         """Filter queryset based on query params."""

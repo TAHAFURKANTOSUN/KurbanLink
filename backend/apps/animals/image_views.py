@@ -28,12 +28,19 @@ class AnimalImageViewSet(viewsets.ModelViewSet):
     queryset = AnimalImage.objects.all()
     
     def get_permissions(self):
-        """Owner can manage images of their listings."""
-        if self.action in ['create', 'destroy']:
-            permission_classes = [IsAuthenticated, IsOwner]
+        """
+        Public read access for viewing images.
+        Owner can manage images of their listings.
+        """
+        from rest_framework.permissions import AllowAny
+        if self.action in ['list']:
+            # Public can view listing images
+            return [AllowAny()]
+        elif self.action in ['create', 'destroy', 'reorder']:
+            # Only owner can manage images
+            return [IsAuthenticated(), IsOwner()]
         else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
+            return [IsAuthenticated()]
     
     def get_queryset(self):
         """

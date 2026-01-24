@@ -86,18 +86,21 @@
     gap: 16px;
     color: var(--muted);
     font-size: 0.875rem;
+    flex-wrap: wrap;
 }
 
 .meta-item {
     display: flex;
     align-items: center;
     gap: 4px;
+    white-space: nowrap;
 }
 
 .meta-icon {
     width: 16px;
     height: 16px;
     opacity: 0.7;
+    flex-shrink: 0;
 }
 
 .card-footer {
@@ -126,4 +129,35 @@
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--accent);
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .card-content {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-meta {
+        gap: 12px;
+        font-size: 0.8125rem;
+    }
+
+    .card-footer {
+        padding-top: 8px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .card-location {
+        font-size: 0.8125rem;
+    }
+
+    .card-price {
+        font-size: 1.125rem;
+    }
 }
