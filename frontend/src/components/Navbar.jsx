@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { Menu, X } from '../ui/icons';
 import './Navbar.css';
@@ -7,17 +7,44 @@ import './Navbar.css';
 const Navbar = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
         setIsDrawerOpen(false);
-        navigate('/login');
+        navigate('/');
     };
 
     const closeDrawer = () => {
         setIsDrawerOpen(false);
     };
+
+    // ESC key handler and body scroll lock
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isDrawerOpen) {
+                closeDrawer();
+            }
+        };
+
+        if (isDrawerOpen) {
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+            // Add ESC listener
+            document.addEventListener('keydown', handleEscape);
+        } else {
+            // Unlock body scroll
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isDrawerOpen]);
+
+    const isActive = (path) => location.pathname === path;
 
     return (
         <>
@@ -104,27 +131,51 @@ const Navbar = () => {
 
                     {/* Navigation Links */}
                     <div className="drawer-nav">
-                        <Link to="/" className="drawer-link" onClick={closeDrawer}>
+                        <Link
+                            to="/"
+                            className={`drawer-link ${isActive('/') ? 'active' : ''}`}
+                            onClick={closeDrawer}
+                        >
                             Ana Sayfa
                         </Link>
-                        <Link to="/partnerships" className="drawer-link" onClick={closeDrawer}>
+                        <Link
+                            to="/partnerships"
+                            className={`drawer-link ${isActive('/partnerships') ? 'active' : ''}`}
+                            onClick={closeDrawer}
+                        >
                             Kurban Ortaklığı
                         </Link>
-                        <Link to="/butchers" className="drawer-link" onClick={closeDrawer}>
+                        <Link
+                            to="/butchers"
+                            className={`drawer-link ${isActive('/butchers') ? 'active' : ''}`}
+                            onClick={closeDrawer}
+                        >
                             Kasap Bul
                         </Link>
 
                         {user && (
                             <>
                                 <div className="drawer-divider" />
-                                <Link to="/messages" className="drawer-link" onClick={closeDrawer}>
+                                <Link
+                                    to="/messages"
+                                    className={`drawer-link ${isActive('/messages') ? 'active' : ''}`}
+                                    onClick={closeDrawer}
+                                >
                                     Mesajlar
                                 </Link>
-                                <Link to="/profile" className="drawer-link" onClick={closeDrawer}>
+                                <Link
+                                    to="/profile"
+                                    className={`drawer-link ${isActive('/profile') ? 'active' : ''}`}
+                                    onClick={closeDrawer}
+                                >
                                     Profilim
                                 </Link>
                                 {user?.roles?.includes('BUTCHER') && (
-                                    <Link to="/butcher/appointments" className="drawer-link" onClick={closeDrawer}>
+                                    <Link
+                                        to="/butcher/appointments"
+                                        className={`drawer-link ${isActive('/butcher/appointments') ? 'active' : ''}`}
+                                        onClick={closeDrawer}
+                                    >
                                         Randevularım
                                     </Link>
                                 )}

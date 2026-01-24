@@ -235,6 +235,12 @@
     background: var(--bg-gray);
 }
 
+.drawer-link.active {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
 .drawer-divider {
     height: 1px;
     background: var(--border);

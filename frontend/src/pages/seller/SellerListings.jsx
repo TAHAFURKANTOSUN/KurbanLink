@@ -145,7 +145,7 @@ const SellerListings = () => {
                                         onClick={() => viewMode === 'active' && navigate(`/animals/${listing.id}`)}
                                         style={{ cursor: viewMode === 'active' ? 'pointer' : 'default' }}
                                     >
-                                        <h3>{listing.title || listing.breed || 'İsimsiz İlan'}</h3>
+                                        <h3>{listing.title || 'İsimsiz İlan'}</h3>
                                         <span className="type-badge">{listing.animal_type}</span>
                                         <div className="details">
                                             <p><strong>Fiyat:</strong> {listing.price} TL</p>

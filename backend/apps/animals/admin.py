@@ -60,13 +60,13 @@ class AnimalListingAdmin(admin.ModelAdmin):
     city_district.short_description = 'Şehir / İlçe'
     
     fieldsets = (
-        ('Animal Information', {
-            'fields': ('animal_type', 'breed', 'age', 'weight')
+        ('Hayvan Bilgileri', {
+            'fields': ('animal_type', 'breed', 'gender', 'age_months', 'weight', 'ear_tag_no')
         }),
-        ('Listing Details', {
-            'fields': ('seller', 'price', 'location', 'description')
+        ('İlan Detayları', {
+            'fields': ('seller', 'title', 'price', 'city', 'district', 'description', 'company')
         }),
-        ('Status', {
+        ('Durum', {
             'fields': ('is_active', 'created_at')
         }),
     )

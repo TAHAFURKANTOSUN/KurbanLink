@@ -12,8 +12,8 @@ const EditListing = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         animal_type: 'SMALL',
+        animal_subtype: '',
         title: '',
-        breed: '',
         gender: '',
         age: '',
         weight: '',
@@ -45,8 +45,8 @@ const EditListing = () => {
                 const listing = await fetchListingDetails(id);
                 setFormData({
                     animal_type: listing.animal_type || 'SMALL',
-                    title: listing.title || listing.breed || '',
-                    breed: listing.breed || '',
+                    animal_subtype: listing.breed || '',
+                    title: listing.title || '',
                     gender: listing.gender || '',
                     age: listing.age || '',
                     weight: listing.weight || '',
@@ -119,7 +119,7 @@ const EditListing = () => {
             const listingData = {
                 animal_type: formData.animal_type,
                 title: formData.title,
-                breed: formData.breed,
+                breed: formData.animal_subtype || '',
                 price: parseFloat(formData.price),
                 location: formData.location,
             };
@@ -213,7 +213,19 @@ const EditListing = () => {
                                 </select>
                             </div>
 
-
+                            <div className="form-group">
+                                <label htmlFor="animal_subtype">Hayvan Türü *</label>
+                                <input
+                                    type="text"
+                                    id="animal_subtype"
+                                    name="animal_subtype"
+                                    value={formData.animal_subtype}
+                                    onChange={handleChange}
+                                    placeholder="örn: Koyun, Keçi, Dana, Tosun"
+                                    required
+                                />
+                                {errors.animal_subtype && <span className="error-text">{errors.animal_subtype}</span>}
+                            </div>
 
                             <div className="form-group">
                                 <label htmlFor="title">İlan Başlığı *</label>
@@ -229,18 +241,6 @@ const EditListing = () => {
                             </div>
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label htmlFor="breed">Irk</label>
-                                    <input
-                                        type="text"
-                                        id="breed"
-                                        name="breed"
-                                        value={formData.breed}
-                                        onChange={handleChange}
-                                        placeholder="örn: Merinos, Kıvırcık"
-                                    />
-                                </div>
-
                                 <div className="form-group">
                                     <label htmlFor="gender">Cinsiyet</label>
                                     <select

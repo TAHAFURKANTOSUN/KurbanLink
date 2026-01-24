@@ -63,8 +63,8 @@ class AnimalListing(models.Model):
         blank=True,
         null=True,
         default="",
-        verbose_name='Irk',
-        help_text="Hayvanın ırkı (opsiyonel, örn: Merinos, Kıvırcık)"
+        verbose_name='Hayvan Türü',
+        help_text="Hayvan türü (Koyun, Keçi, Dana, Tosun vb.)"
     )
     
     gender = models.CharField(

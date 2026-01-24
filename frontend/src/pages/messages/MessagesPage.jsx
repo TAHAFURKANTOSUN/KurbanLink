@@ -10,7 +10,7 @@ import {
   markAllRead,
   markGroupAllRead
 } from '../../api/messages';
-import { Send, User as UserIcon, Users as UsersIcon } from '../../ui/icons';
+import { Send, User as UserIcon, Users as UsersIcon, ArrowLeft } from '../../ui/icons';
 import './MessagesPage.css';
 
 const MessagesPage = () => {
@@ -25,6 +25,16 @@ const MessagesPage = () => {
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Load conversations on mount
   useEffect(() => {
@@ -108,14 +118,23 @@ const MessagesPage = () => {
 
   const handleConversationSelect = (conversation, updateUrl = true) => {
     setSelectedConversation(conversation);
-    if (updateUrl) {
-      if (conversation.type === 'GROUP') {
-        setSearchParams({ group: conversation.partnership_id || conversation.id });
-      } else {
-        setSearchParams({ conversation: conversation.id });
-      }
-    }
     loadMessages(conversation);
+
+    if (updateUrl) {
+      const params = new URLSearchParams();
+      if (conversation.type === 'GROUP') {
+        params.set('group', conversation.id);
+      } else {
+        params.set('conversation', conversation.id);
+      }
+      setSearchParams(params);
+    }
+  };
+
+  const handleBackToList = () => {
+    setSelectedConversation(null);
+    setMessages([]);
+    setSearchParams({});
   };
 
   const handleSendMessage = async (e) => {
@@ -172,7 +191,7 @@ const MessagesPage = () => {
     <div className="messages-page">
       <div className="messages-container">
         {/* Left Column - Conversation List */}
-        <div className="messages-sidebar">
+        <div className={`messages-sidebar ${isMobileView && selectedConversation ? 'hidden' : ''}`}>
           <div className="messages-sidebar__header">
             <h2>Mesajlar</h2>
           </div>
@@ -231,6 +250,11 @@ const MessagesPage = () => {
             <>
               {/* Thread Header */}
               <div className="messages-main__header">
+                {isMobileView && (
+                  <button className="messages-back-btn" onClick={handleBackToList}>
+                    <ArrowLeft size={20} />
+                  </button>
+                )}
                 <div className="messages-main__header-avatar">
                   {selectedConversation.type === 'GROUP' ? <UsersIcon size={24} /> : (selectedConversation.title?.charAt(0)?.toUpperCase() || <UserIcon size={24} />)}
                 </div>

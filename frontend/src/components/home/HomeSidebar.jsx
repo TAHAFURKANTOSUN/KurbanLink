@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { cities } from '../../data/locations';
+import { Search, PartnershipIcon, Filter, X } from '../../ui/icons';
 import './HomeSidebar.css';
-import { Search, PartnershipIcon } from '../../ui/icons';
 
 const HomeSidebar = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     // Get current filter values
     const currentType = searchParams.get('animal_type');
@@ -40,8 +41,38 @@ const HomeSidebar = () => {
         }
     };
 
-    return (
-        <aside className="home-sidebar">
+    const toggleFilter = () => {
+        setIsFilterOpen(!isFilterOpen);
+    };
+
+    const closeFilter = () => {
+        setIsFilterOpen(false);
+    };
+
+    // ESC key and body scroll lock for filter modal
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && isFilterOpen) {
+                closeFilter();
+            }
+        };
+
+        if (isFilterOpen) {
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('keydown', handleEscape);
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isFilterOpen]);
+
+    // Render filter content (shared between desktop sidebar and mobile modal)
+    const renderFilterContent = () => (
+        <>
             {/* 1. Kategoriler */}
             <div className="sidebar-section">
                 <h3 className="sidebar-title">Kategoriler</h3>
@@ -190,7 +221,45 @@ const HomeSidebar = () => {
                     </li>
                 </ul>
             </div>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            {/* Desktop Sidebar */}
+            <aside className="home-sidebar desktop-only">
+                {renderFilterContent()}
+            </aside>
+
+            {/* Mobile Filter Button */}
+            <button className="mobile-filter-btn" onClick={toggleFilter}>
+                <Filter size={20} />
+                <span>Filtrele</span>
+            </button>
+
+            {/* Mobile Filter Modal */}
+            {isFilterOpen && (
+                <>
+                    <div className="filter-overlay" onClick={closeFilter} />
+                    <div className="filter-modal">
+                        <div className="filter-modal-header">
+                            <h2>Filtreler</h2>
+                            <button className="filter-close-btn" onClick={closeFilter}>
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="filter-modal-content">
+                            {renderFilterContent()}
+                        </div>
+                        <div className="filter-modal-footer">
+                            <button className="filter-apply-btn" onClick={closeFilter}>
+                                Uygula
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </>
     );
 };
 

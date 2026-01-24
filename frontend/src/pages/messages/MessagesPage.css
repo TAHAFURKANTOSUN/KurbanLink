@@ -352,4 +352,28 @@
     .message {
         max-width: 80%;
     }
+
+    /* Back button */
+    .messages-back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        border-radius: 50%;
+    }
+
+    .messages-back-btn:hover {
+        background: var(--bg-gray);
+    }
+
+    .messages-main__header {
+        display: flex;
+        align-items: center;
+    }
 }

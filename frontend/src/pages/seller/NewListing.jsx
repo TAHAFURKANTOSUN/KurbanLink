@@ -8,8 +8,8 @@ const NewListing = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         animal_type: 'SMALL',
+        animal_subtype: '',
         title: '',
-        breed: '',
         gender: '',
         age: '',
         weight: '',
@@ -190,7 +190,7 @@ const NewListing = () => {
             const listingData = {
                 title: formData.title,
                 animal_type: formData.animal_type,
-                breed: formData.breed || '',
+                breed: formData.animal_subtype || '',
                 gender: formData.gender || null,
                 price: parseFloat(formData.price), // Ensure number
                 city: formData.city,
@@ -288,7 +288,19 @@ const NewListing = () => {
                                 </select>
                             </div>
 
-
+                            <div className="form-group">
+                                <label htmlFor="animal_subtype">Hayvan Türü *</label>
+                                <input
+                                    type="text"
+                                    id="animal_subtype"
+                                    name="animal_subtype"
+                                    value={formData.animal_subtype}
+                                    onChange={handleChange}
+                                    placeholder="örn: Koyun, Keçi, Dana, Tosun"
+                                    required
+                                />
+                                {errors.animal_subtype && <span className="error-text">{errors.animal_subtype}</span>}
+                            </div>
 
                             <div className="form-group">
                                 <label htmlFor="title">İlan Başlığı *</label>
@@ -305,18 +317,6 @@ const NewListing = () => {
                             </div>
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label htmlFor="breed">Irk</label>
-                                    <input
-                                        type="text"
-                                        id="breed"
-                                        name="breed"
-                                        value={formData.breed}
-                                        onChange={handleChange}
-                                        placeholder="örn: Merinos, Kıvırcık"
-                                    />
-                                </div>
-
                                 <div className="form-group">
                                     <label htmlFor="gender">Cinsiyet</label>
                                     <select
