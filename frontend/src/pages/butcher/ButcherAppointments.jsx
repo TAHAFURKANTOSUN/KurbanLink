@@ -1,20 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchButcherAppointments, approveAppointment, rejectAppointment } from '../../api/butchers';
+import {
+    fetchButcherAppointments,
+    approveAppointment,
+    rejectAppointment,
+    fetchMyButcherProfile,
+    createButcherProfile
+} from '../../api/butchers';
 import './ButcherAppointments.css';
 import { Calendar, Clock } from '../../ui/icons';
 
-const ButcherAppointments = () => {
+const ButcherPanel = () => {
     const navigate = useNavigate();
+
+    // Panel State
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [hasProfile, setHasProfile] = useState(false);
+
+    // Appointments State
     const [appointments, setAppointments] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [actionLoading, setActionLoading] = useState({});
 
+    // Profile Form State
+    const [profileData, setProfileData] = useState({
+        city: '',
+        district: '',
+        price_range: '',
+        services: '', // Comma separated
+        first_name: '',
+        last_name: ''
+    });
+    const [createError, setCreateError] = useState(null);
+    const [createLoading, setCreateLoading] = useState(false);
+
     useEffect(() => {
-        loadAppointments();
+        checkProfile();
     }, []);
+
+    const checkProfile = async () => {
+        setProfileLoading(true);
+        try {
+            const profile = await fetchMyButcherProfile();
+            if (profile && profile.id) {
+                setHasProfile(true);
+                loadAppointments();
+            } else {
+                setHasProfile(false);
+            }
+        } catch (err) {
+            console.error('Profile check failed:', err);
+            // If 404/403 or network error, assume no profile or handle gracefully
+            // If backend returns null for 'me' (as seen in views.py), it goes to 'if (profile)' check above.
+            // But if it errors out, setHasProfile(false) might be safe or show error.
+            setHasProfile(false);
+        } finally {
+            setProfileLoading(false);
+        }
+    };
 
     const loadAppointments = async () => {
         setLoading(true);
@@ -29,6 +74,36 @@ const ButcherAppointments = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCreateProfile = async (e) => {
+        e.preventDefault();
+        setCreateLoading(true);
+        setCreateError(null);
+
+        try {
+            const payload = {
+                ...profileData,
+                services: profileData.services.split(',').map(s => s.trim()).filter(Boolean)
+            };
+
+            await createButcherProfile(payload);
+            setHasProfile(true);
+            loadAppointments(); // Load appointments (likely empty)
+        } catch (err) {
+            console.error('Create profile failed:', err);
+            const msg = err.response?.data?.error?.message ||
+                err.response?.data?.detail ||
+                'Profil oluşturulamadı. Lütfen tekrar deneyin.';
+            setCreateError(msg);
+        } finally {
+            setCreateLoading(false);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProfileData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleApprove = async (id) => {
@@ -142,48 +217,131 @@ const ButcherAppointments = () => {
         </div>
     );
 
-    if (loading) {
+    if (profileLoading) {
         return (
             <div className="butcher-appointments-page">
-
                 <div className="container">
-                    <div className="loading-state">Randevular yükleniyor...</div>
+                    <div className="loading-state">Yükleniyor...</div>
                 </div>
             </div>
         );
     }
 
-    if (error) {
+    // --- CREATE PROFILE VIEW ---
+    if (!hasProfile) {
         return (
             <div className="butcher-appointments-page">
-
                 <div className="container">
-                    <div className="error-state">
-                        <p>{error}</p>
-                        <button onClick={loadAppointments} className="btn-primary">
-                            Tekrar Dene
-                        </button>
+                    <div className="create-profile-card" style={{ maxWidth: '600px', margin: '40px auto', background: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
+                        <h1 style={{ fontSize: '24px', marginBottom: '10px', color: '#1a1a1a' }}>Kasap İlanı Oluştur</h1>
+                        <p style={{ color: '#666', marginBottom: '24px' }}>
+                            Kasaplık hizmetlerinizi sunmak ve randevu alabilmek için profilinizi oluşturun.
+                        </p>
+
+                        {createError && (
+                            <div className="error-banner" style={{ marginBottom: '20px' }}>
+                                {createError}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleCreateProfile}>
+                            <div className="form-group">
+                                <label>İsim *</label>
+                                <input
+                                    type="text"
+                                    name="first_name"
+                                    value={profileData.first_name}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Adınız"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Soyisim *</label>
+                                <input
+                                    type="text"
+                                    name="last_name"
+                                    value={profileData.last_name}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Soyadınız"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Şehir *</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    value={profileData.city}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Örn: İstanbul"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>İlçe</label>
+                                <input
+                                    type="text"
+                                    name="district"
+                                    value={profileData.district}
+                                    onChange={handleInputChange}
+                                    placeholder="Örn: Kadıköy"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Hizmetler (Virgülle ayırın)</label>
+                                <input
+                                    type="text"
+                                    name="services"
+                                    value={profileData.services}
+                                    onChange={handleInputChange}
+                                    placeholder="Örn: Kesim, Paylama, Teslimat"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Fiyat Aralığı</label>
+                                <input
+                                    type="text"
+                                    name="price_range"
+                                    value={profileData.price_range}
+                                    onChange={handleInputChange}
+                                    placeholder="Örn: 5000 - 10000 TL"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="complete-btn"
+                                disabled={createLoading}
+                                style={{ marginTop: '10px' }}
+                            >
+                                {createLoading ? 'Oluşturuluyor...' : 'Profil Oluştur ve Devam Et'}
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         );
     }
 
+    // --- DASHBOARD VIEW (APPOINTMENTS) ---
     return (
         <div className="butcher-appointments-page">
-
-
             <div className="container appointments-content">
                 <div className="page-header">
-                    <h1>Randevularım</h1>
-                    <p className="subtitle">Randevu taleplerinizi yönetin</p>
+                    <h1>Kasap Paneli</h1>
+                    <p className="subtitle">Gelen randevu isteklerinizi ve ilanınızı yönetin</p>
                 </div>
 
-                {appointments.length === 0 ? (
+                {loading ? (
+                    <div className="loading-state">Randevular yükleniyor...</div>
+                ) : error ? (
+                    <div className="error-state">
+                        <p>{error}</p>
+                        <button onClick={loadAppointments} className="btn-primary">Tekrar Dene</button>
+                    </div>
+                ) : appointments.length === 0 ? (
                     <div className="empty-state">
-                        <svg className="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
                         <p>Henüz randevu talebi bulunmamaktadır.</p>
                     </div>
                 ) : (
@@ -242,4 +400,4 @@ const ButcherAppointments = () => {
     );
 };
 
-export default ButcherAppointments;
+export default ButcherPanel;

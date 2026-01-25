@@ -19,3 +19,13 @@ export const fetchMe = async () => {
     const response = await apiClient.get('/api/auth/me/');
     return response.data;
 };
+
+export const requestEmailOTP = async (email) => {
+    const response = await apiClient.post('/api/auth/email-otp/request/', { email });
+    return response.data;
+};
+
+export const verifyEmailOTP = async (email, otp) => {
+    const response = await apiClient.post('/api/auth/email-otp/verify/', { email, otp });
+    return response.data;
+};

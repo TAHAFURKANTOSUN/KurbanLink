@@ -4,6 +4,7 @@ Custom User model for KurbanLink.
 Uses email authentication instead of username.
 """
 
+import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
@@ -69,6 +70,26 @@ class User(AbstractBaseUser, PermissionsMixin):
         default="TR",
         help_text="Country code for location context (e.g., TR, DE)"
     )
+
+    # Personal information
+    first_name = models.CharField(
+        max_length=50,
+        blank=True,
+        default='',
+        help_text="User's first name"
+    )
+    last_name = models.CharField(
+        max_length=50,
+        blank=True,
+        default='',
+        help_text="User's last name"
+    )
+    
+    # Email verification
+    email_verified = models.BooleanField(
+        default=False,
+        help_text="Whether the user's email has been verified"
+    )
     
     # Profile fields for UX revamp
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
@@ -90,6 +111,128 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self) -> str:
         return self.email
+
+
+class EmailOTPVerification(models.Model):
+    """
+    Stores email OTP verification data for registration flow.
+    
+    OTPs are stored as hashed values and expire after 10 minutes.
+    """
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(db_index=True, help_text="Email address to verify")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text="Associated user (null if not yet registered)"
+    )
+    otp_hash = models.CharField(
+        max_length=128,
+        help_text="Hashed OTP code (never store plaintext)"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(help_text="OTP expiration time")
+    consumed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When the OTP was successfully verified"
+    )
+    attempt_count = models.IntegerField(
+        default=0,
+        help_text="Number of failed verification attempts"
+    )
+    resend_count = models.IntegerField(
+        default=0,
+        help_text="Number of times OTP was resent"
+    )
+    last_sent_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When OTP was last sent"
+    )
+    purpose = models.CharField(
+        max_length=50,
+        default='REGISTER_EMAIL_VERIFY',
+        help_text="Purpose of this OTP"
+    )
+    
+    class Meta:
+        verbose_name = 'Email OTP Verification'
+        verbose_name_plural = 'Email OTP Verifications'
+        indexes = [
+            models.Index(fields=['email', 'purpose', 'consumed_at']),
+            models.Index(fields=['email', 'purpose', 'expires_at']),
+        ]
+        ordering = ['-created_at']
+    
+    def __str__(self) -> str:
+        return f"OTP for {self.email} ({'consumed' if self.consumed_at else 'pending'})"
+    
+    def is_expired(self) -> bool:
+        """Check if OTP has expired."""
+        return timezone.now() > self.expires_at
+    
+    def is_consumed(self) -> bool:
+        """Check if OTP has been consumed."""
+        return self.consumed_at is not None
+    
+    def is_locked(self) -> bool:
+        """Check if too many attempts have been made."""
+        return self.attempt_count >= 5
+
+
+class EmailVerificationToken(models.Model):
+    """
+    Stores verification tokens issued after successful OTP verification.
+    
+    Tokens are single-use and expire after 30 minutes.
+    """
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(db_index=True, help_text="Verified email address")
+    token_hash = models.CharField(
+        max_length=128,
+        help_text="Hashed verification token (never store plaintext)"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(help_text="Token expiration time")
+    consumed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When the token was used for registration"
+    )
+    purpose = models.CharField(
+        max_length=50,
+        default='REGISTER_EMAIL',
+        help_text="Purpose of this verification token"
+    )
+    
+    class Meta:
+        verbose_name = 'Email Verification Token'
+        verbose_name_plural = 'Email Verification Tokens'
+        indexes = [
+            models.Index(fields=['email', 'purpose', 'consumed_at']),
+            models.Index(fields=['email', 'purpose', 'expires_at']),
+        ]
+        ordering = ['-created_at']
+    
+    def __str__(self) -> str:
+        return f"Verification token for {self.email} ({'consumed' if self.consumed_at else 'active'})"
+    
+    def is_expired(self) -> bool:
+        """Check if token has expired."""
+        return timezone.now() > self.expires_at
+    
+    def is_consumed(self) -> bool:
+        """Check if token has been consumed."""
+        return self.consumed_at is not None
+    
+    def is_valid(self) -> bool:
+        """Check if token is valid (not expired and not consumed)."""
+        return not self.is_expired() and not self.is_consumed()
 
 
 class Role(models.Model):

@@ -83,14 +83,29 @@ class ButcherProfileViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
     
 
+    def create(self, request, *args, **kwargs):
+        """
+        Create own butcher profile.
+        Enforces 1 profile per user rule.
+        """
+        # Check if user already has a profile
+        if ButcherProfile.objects.filter(user=request.user).exists():
+            return Response(
+                {
+                    "error": {
+                        "code": "BUTCHER_PROFILE_ALREADY_EXISTS",
+                        "message": "Zaten bir kasap ilanınız var. Yeni ilan oluşturamazsınız."
+                    }
+                },
+                status=status.HTTP_409_CONFLICT
+            )
+            
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         """
         Auto-assign user when creating profile.
         """
-        # Check if user already has a profile
-        if ButcherProfile.objects.filter(user=self.request.user).exists():
-            raise serializers.ValidationError("User already has a butcher profile.")
-            
         serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])

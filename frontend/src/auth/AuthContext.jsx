@@ -87,15 +87,16 @@ export const AuthProvider = ({ children }) => {
         setError(null);
 
         try {
-            const data = await registerAPI(userData);
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
+            await registerAPI(userData);
+            // Don't auto-login, let user login manually as requested
+            // localStorage.setItem('access_token', data.access);
+            // localStorage.setItem('refresh_token', data.refresh);
 
             // Fetch full user data
-            const userInfo = await fetchMe();
-            setUser(userInfo);
+            // const userInfo = await fetchMe();
+            // setUser(userInfo);
 
-            console.log('[AuthContext] Register success:', userInfo);
+            console.log('[AuthContext] Register success');
             return { success: true };
         } catch (err) {
             const errors = err.response?.data || {};

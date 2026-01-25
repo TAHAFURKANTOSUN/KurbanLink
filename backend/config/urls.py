@@ -17,7 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
-from apps.accounts.views import CustomTokenObtainPairView, RegisterView, MeAPIView
+from apps.accounts.views import (
+    CustomTokenObtainPairView, RegisterView, MeAPIView,
+    RequestOTPView, VerifyOTPView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +30,10 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/register/', RegisterView.as_view(), name='register'),
     path('api/auth/me/', MeAPIView.as_view(), name='me'),
+    
+    # Email OTP verification endpoints
+    path('api/auth/email-otp/request/', RequestOTPView.as_view(), name='request_otp'),
+    path('api/auth/email-otp/verify/', VerifyOTPView.as_view(), name='verify_otp'),
     
     # Animal listings API
     path('api/animals/', include('apps.animals.urls')),

@@ -32,3 +32,7 @@ DATABASES = {
 #     "http://localhost:3000",
 #     "http://127.0.0.1:3000",
 # ]
+
+# Email backend for development (prints emails to console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'no-reply@kurbanlink.local'

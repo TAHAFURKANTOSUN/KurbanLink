@@ -96,15 +96,19 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'password', 'username', 'phone_number', 'country_code',
+            'id', 'first_name', 'last_name', 'email', 'password', 'username', 'phone_number', 'country_code',
             'city', 'district',
             'is_butcher', 'butcher_profile'
         ]
         extra_kwargs = {
             'password': {'write_only': True},
+            'first_name': {'required': True},
+            'last_name': {'required': True},
             'username': {'required': True},
-            'phone_number': {'required': True},
-            'country_code': {'required': False, 'default': 'TR'},
+            'phone_number': {'required': False, 'allow_blank': True},
+            'country_code': {'required': False, 'allow_blank': True},
+            'city': {'required': False, 'allow_blank': True},
+            'district': {'required': False, 'allow_blank': True},
         }
     
     def validate_email(self, value):
@@ -131,15 +135,15 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Bu kullanıcı adı zaten kullanılıyor.")
         
         # Validate length
-        if len(normalized) < 3 or len(normalized) > 30:
-            raise serializers.ValidationError("Kullanıcı adı 3-30 karakter arasında olmalıdır.")
+        if len(normalized) < 3 or len(normalized) > 20:
+            raise serializers.ValidationError("Kullanıcı adı 3-20 karakter arasında olmalıdır.")
         
         return normalized
     
     def validate_phone_number(self, value):
-        """Validate phone number is not empty."""
+        """Validate phone number is not empty if provided."""
         if not value or not value.strip():
-            raise serializers.ValidationError("Telefon numarası gereklidir.")
+            return ""
         return value.strip()
     
     def validate(self, attrs):
@@ -172,14 +176,20 @@ class RegisterSerializer(serializers.ModelSerializer):
             
             # Create butcher profile
             from apps.butchers.models import ButcherProfile
+            
+            # Use provided profile data or default to empty dict
+            profile_data = butcher_profile_data or {}
+            
             ButcherProfile.objects.create(
                 user=user,
-                first_name=butcher_profile_data['first_name'],
-                last_name=butcher_profile_data['last_name'],
-                city=butcher_profile_data['city'],
-                district=butcher_profile_data.get('district', ''),
-                services=butcher_profile_data.get('services', []),
-                price_range=butcher_profile_data.get('price_range', ''),
+                # Default to empty strings if not provided, allowing user to fill later
+                first_name=profile_data.get('first_name') or "",
+                last_name=profile_data.get('last_name') or "",
+                # Use user's location as default for business location
+                city=profile_data.get('city') or user.city,
+                district=profile_data.get('district') or user.district or "",
+                services=profile_data.get('services', []),
+                price_range=profile_data.get('price_range', ''),
             )
         
         return user

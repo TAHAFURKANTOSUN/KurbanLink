@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './Login.css';
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
     const { login, loading, error } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const successMessage = location.state?.success;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,6 +53,9 @@ const Login = () => {
                                 required
                             />
                         </div>
+
+
+                        {successMessage && <div className="success-message" style={{ backgroundColor: '#d4edda', color: '#155724', padding: '1rem', borderRadius: '4px', marginBottom: '1rem', textAlign: 'center' }}>{successMessage}</div>}
 
                         {error && <div className="error">{error}</div>}
 
