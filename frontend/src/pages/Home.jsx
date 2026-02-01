@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import FeaturedSection from '../components/home/FeaturedSection';
 import HomeSidebar from '../components/home/HomeSidebar';
 import RecommendedListings from '../components/home/RecommendedListings';
+import SEO from '../components/SEO';
 import { fetchAnimals, fetchAnimalImages } from '../api/animals';
 import { useAuth } from '../auth/AuthContext';
 import './Home.css';
@@ -56,6 +57,13 @@ const Home = () => {
 
     return (
         <div className="home-page">
+            <SEO
+                title="Ana Sayfa"
+                description="Kurban hayvanı alım satım platformu. Koyun, kuzu, dana, tosun ve deve ilanları. Güvenilir satıcılardan kurban hayvanı satın alın."
+                keywords="kurban, kurban hayvanı, koyun, kuzu, dana, tosun, deve, kurban satışı"
+                url="https://kurbanlink.com/"
+            />
+
             <div className="home-container">
                 <HomeSidebar />
 

@@ -9,6 +9,8 @@ import './AnimalDetail.css';
 import { Edit3, Eye, MessageCircle, Heart, Trash2 } from '../ui/icons';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import SimilarListings from '../components/animals/SimilarListings';
+import SEO from '../components/SEO';
+import { generateListingStructuredData } from '../utils/structuredData';
 
 const AnimalDetail = () => {
     const { id } = useParams();
@@ -216,6 +218,24 @@ const AnimalDetail = () => {
 
     return (
         <div className="detail-container">
+            {listing && (
+                <>
+                    <SEO
+                        title={listing.title || listing.breed}
+                        description={listing.description || `${listing.animal_type} - ${listing.breed}, ${listing.location}, ${listing.price} TL`}
+                        keywords={`${listing.animal_type}, ${listing.breed}, kurban hayvanı, ${listing.city}`}
+                        image={selectedImage?.image_url}
+                        url={`https://kurbanlink.com/animals/${id}`}
+                        type="product"
+                    />
+
+                    {/* JSON-LD Structured Data */}
+                    <script type="application/ld+json">
+                        {generateListingStructuredData({ ...listing, images })}
+                    </script>
+                </>
+            )}
+
             <div className="detail-header">
                 <button onClick={() => navigate('/')} className="back-btn">← İlanlara Dön</button>
                 <div className="header-actions">

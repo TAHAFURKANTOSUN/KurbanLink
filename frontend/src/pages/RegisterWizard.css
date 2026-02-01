@@ -98,6 +98,86 @@
     margin-top: 6px;
 }
 
+/* Password Strength Tooltip */
+.password-field-wrapper {
+    position: relative;
+}
+
+.password-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.password-tooltip .tooltip-title {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.strength-criteria {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.criteria-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.criteria-item.valid {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.criteria-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.criteria-item:not(.valid) .criteria-icon {
+    color: #d1d5db;
+    border: 2px solid #d1d5db;
+}
+
+.criteria-item.valid .criteria-icon {
+    color: white;
+    background-color: #16a34a;
+    border: none;
+}
+
 .info-text {
     display: block;
     color: #1F7A4D;

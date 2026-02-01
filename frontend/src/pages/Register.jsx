@@ -11,6 +11,14 @@ const RegisterWizard = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [showPasswordTooltip, setShowPasswordTooltip] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState({
+        hasMinLength: false,
+        hasUppercase: false,
+        hasLowercase: false,
+        hasNumber: false,
+        hasSpecial: false
+    });
 
     // Form data
     const [formData, setFormData] = useState({
@@ -37,6 +45,18 @@ const RegisterWizard = () => {
         const { name, value, type, checked } = e.target;
         const val = type === 'checkbox' ? checked : value;
         setFormData(prev => ({ ...prev, [name]: val }));
+
+        // Real-time password validation
+        if (name === 'password') {
+            setPasswordStrength({
+                hasMinLength: value.length >= 8,
+                hasUppercase: /[A-Z]/.test(value),
+                hasLowercase: /[a-z]/.test(value),
+                hasNumber: /[0-9]/.test(value),
+                hasSpecial: /[^A-Za-z0-9]/.test(value)
+            });
+        }
+
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: null }));
         }
@@ -75,6 +95,18 @@ const RegisterWizard = () => {
                 newErrors.password = 'Şifre gereklidir';
             } else if (formData.password.length < 8) {
                 newErrors.password = 'Şifre en az 8 karakter olmalıdır';
+            } else {
+                // Count how many criteria are met
+                const criteriaCount = [
+                    passwordStrength.hasUppercase,
+                    passwordStrength.hasLowercase,
+                    passwordStrength.hasNumber,
+                    passwordStrength.hasSpecial
+                ].filter(Boolean).length;
+
+                if (criteriaCount < 3) {
+                    newErrors.password = 'Şifre en az 3 farklı karakter türü içermelidir (büyük harf, küçük harf, rakam, özel karakter)';
+                }
             }
 
             if (formData.password !== formData.passwordConfirm) {
@@ -232,17 +264,48 @@ const RegisterWizard = () => {
                                 {errors.username && <span className="error-text">{errors.username}</span>}
                             </div>
 
-                            <div className="form-group">
+                            <div className="form-group password-field-wrapper">
                                 <label htmlFor="password">Şifre *</label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className={errors.password ? 'error' : ''}
-                                    placeholder="En az 8 karakter"
-                                />
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        onFocus={() => setShowPasswordTooltip(true)}
+                                        onBlur={() => setTimeout(() => setShowPasswordTooltip(false), 200)}
+                                        className={errors.password ? 'error' : ''}
+                                        placeholder="En az 8 karakter"
+                                    />
+
+                                    {/* Password Strength Tooltip */}
+                                    {showPasswordTooltip && (
+                                        <div className="password-tooltip">
+                                            <p className="tooltip-title">
+                                                Şifre en az 8 karakter uzunluğunda olmalı ve aşağıdakilerden en az 3 tanesini içermelidir:
+                                            </p>
+                                            <div className="strength-criteria">
+                                                <div className={`criteria-item ${passwordStrength.hasUppercase ? 'valid' : ''}`}>
+                                                    <span className="criteria-icon">{passwordStrength.hasUppercase ? '✓' : '○'}</span>
+                                                    <span>Büyük harfler</span>
+                                                </div>
+                                                <div className={`criteria-item ${passwordStrength.hasLowercase ? 'valid' : ''}`}>
+                                                    <span className="criteria-icon">{passwordStrength.hasLowercase ? '✓' : '○'}</span>
+                                                    <span>Küçük harfler</span>
+                                                </div>
+                                                <div className={`criteria-item ${passwordStrength.hasNumber ? 'valid' : ''}`}>
+                                                    <span className="criteria-icon">{passwordStrength.hasNumber ? '✓' : '○'}</span>
+                                                    <span>Rakamlar</span>
+                                                </div>
+                                                <div className={`criteria-item ${passwordStrength.hasSpecial ? 'valid' : ''}`}>
+                                                    <span className="criteria-icon">{passwordStrength.hasSpecial ? '✓' : '○'}</span>
+                                                    <span>Özel karakterler (!@#$%^&* vb.)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                                 {errors.password && <span className="error-text">{errors.password}</span>}
                             </div>
 
