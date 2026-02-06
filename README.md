@@ -46,12 +46,13 @@ cd backend
 
 # Python sanal ortamı oluştur (isteğe bağlı ama önerilir)
 python3 -m venv venv
-
+#windows
+python -m venv venv
 # Sanal ortamı aktif et
 # macOS/Linux:
 source venv/bin/activate
 # Windows:
-# venv\Scripts\activate
+# source venv/Scripts/activate
 
 # Gerekli Python paketlerini yükle
 pip install -r requirements.txt
